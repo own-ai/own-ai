@@ -9,7 +9,7 @@ export default function Uploader({
   name,
 }: {
   defaultValue: string | null;
-  name: "image" | "logo";
+  name: "image";
 }) {
   const aspectRatio = name === "image" ? "aspect-video" : "aspect-square";
 
@@ -48,7 +48,7 @@ export default function Uploader({
           "group relative mt-2 flex cursor-pointer flex-col items-center justify-center rounded-md border border-gray-300 bg-white shadow-sm transition-all hover:bg-gray-50",
           aspectRatio,
           {
-            "max-w-screen-md": aspectRatio === "aspect-video",
+            "max-w-sm": aspectRatio === "aspect-video",
             "max-w-xs": aspectRatio === "aspect-square",
           },
         )}

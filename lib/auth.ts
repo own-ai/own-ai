@@ -1,29 +1,28 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
+import { sendVerificationRequest } from "./authmail";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GitHubProvider({
-      clientId: process.env.AUTH_GITHUB_ID as string,
-      clientSecret: process.env.AUTH_GITHUB_SECRET as string,
-      profile(profile) {
-        return {
-          id: profile.id.toString(),
-          name: profile.name || profile.login,
-          gh_username: profile.login,
-          email: profile.email,
-          image: profile.avatar_url,
-        };
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
       },
+      from: process.env.EMAIL_FROM,
+      sendVerificationRequest,
     }),
   ],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/login`,
     error: "/login", // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
@@ -50,13 +49,20 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+    redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return url;
+      // Allows callback URLs on the same origin
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
     session: async ({ session, token }) => {
       session.user = {
         ...session.user,
         // @ts-expect-error
         id: token.sub,
         // @ts-expect-error
-        username: token?.user?.username || token?.user?.gh_username,
+        username: token?.user?.username || token?.user?.email,
       };
       return session;
     },
@@ -75,10 +81,10 @@ export function getSession() {
   } | null>;
 }
 
-export function withSiteAuth(action: any) {
+export function withAiAuth(action: any) {
   return async (
     formData: FormData | null,
-    siteId: string,
+    aiId: string,
     key: string | null,
   ) => {
     const session = await getSession();
@@ -87,25 +93,25 @@ export function withSiteAuth(action: any) {
         error: "Not authenticated",
       };
     }
-    const site = await prisma.site.findUnique({
+    const ai = await prisma.ai.findUnique({
       where: {
-        id: siteId,
+        id: aiId,
       },
     });
-    if (!site || site.userId !== session.user.id) {
+    if (!ai || ai.userId !== session.user.id) {
       return {
         error: "Not authorized",
       };
     }
 
-    return action(formData, site, key);
+    return action(formData, ai, key);
   };
 }
 
-export function withPostAuth(action: any) {
+export function withKnowledgeAuth(action: any) {
   return async (
     formData: FormData | null,
-    postId: string,
+    knowledgeId: string,
     key: string | null,
   ) => {
     const session = await getSession();
@@ -114,20 +120,20 @@ export function withPostAuth(action: any) {
         error: "Not authenticated",
       };
     }
-    const post = await prisma.post.findUnique({
+    const knowledge = await prisma.knowledge.findUnique({
       where: {
-        id: postId,
+        id: knowledgeId,
       },
       include: {
-        site: true,
+        ai: true,
       },
     });
-    if (!post || post.userId !== session.user.id) {
+    if (!knowledge || knowledge.userId !== session.user.id) {
       return {
-        error: "Post not found",
+        error: "Knowledge not found",
       };
     }
 
-    return action(formData, post, key);
+    return action(formData, knowledge, key);
   };
 }

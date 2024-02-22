@@ -87,9 +87,9 @@ export default function DomainConfiguration({ domain }: { domain: string }) {
             </div>
           </div>
           <p className="text-sm dark:text-stone-400">
-            Warning: if you are using this domain for another site, setting this
-            TXT record will transfer domain ownership away from that site and
-            break it. Please exercise caution when setting this record.
+            Warning: if you are using this domain for another AI, setting this
+            TXT record will transfer domain ownership away from that AI. Please
+            exercise caution when setting this record.
           </p>
         </>
       ) : status === "Unknown Error" ? (

@@ -17,7 +17,7 @@ export default function ReportAbuse() {
   return (
     <div className="fixed bottom-5 right-5">
       <button
-        className="rounded-full bg-black p-4 text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl active:translate-y-0 active:shadow-sm"
+        className="rounded-full bg-black p-4 text-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:shadow-sm"
         onClick={() => setOpen(!open)}
       >
         <AlertTriangle size={24} />
@@ -31,7 +31,7 @@ export default function ReportAbuse() {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setOpen(false);
             toast.success(
-              "Successfully reported abuse – thank you for helping us keep the internet safe!",
+              "Successfully reported abuse – thank you for helping us keep AI safe!",
             );
           }}
           className="absolute bottom-20 right-2 flex w-96 flex-col space-y-6 rounded-lg border border-stone-200 bg-white p-8 shadow-lg animate-in slide-in-from-bottom-5"
@@ -41,7 +41,7 @@ export default function ReportAbuse() {
               Report Abuse
             </h2>
             <p className="mt-2 text-sm leading-6 text-stone-600">
-              Found a site with abusive content? Let us know!
+              Found an AI with abusive content? Let us know!
             </p>
           </div>
 

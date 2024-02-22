@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Form from "@/components/form";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -17,26 +16,24 @@ export default async function SettingsPage() {
         </h1>
         <Form
           title="Name"
-          description="Your name on this app."
-          helpText="Please use 32 characters maximum."
+          description="How should we call you?"
+          helpText=""
           inputAttrs={{
             name: "name",
             type: "text",
             defaultValue: session.user.name!,
-            placeholder: "Brendon Urie",
-            maxLength: 32,
+            maxLength: 100,
           }}
           handleSubmit={editUser}
         />
         <Form
-          title="Email"
-          description="Your email on this app."
-          helpText="Please enter a valid email."
+          title="E-mail"
+          description="Please keep your e-mail address up-to-date. You will need access to your mails when you log in to ownAI."
+          helpText=""
           inputAttrs={{
             name: "email",
             type: "email",
             defaultValue: session.user.email!,
-            placeholder: "panic@thedis.co",
           }}
           handleSubmit={editUser}
         />

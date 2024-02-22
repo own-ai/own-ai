@@ -1,41 +1,26 @@
-import { Configuration, OpenAIApi } from "openai-edge";
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import { kv } from "@vercel/kv";
-import { Ratelimit } from "@upstash/ratelimit";
+"use server";
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(config);
+import { StreamingTextResponse } from "ai";
+import { TogetherAI } from "@langchain/community/llms/togetherai";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { getSession } from "@/lib/auth";
+import { getRatelimitResponse } from "@/lib/ratelimit";
 
-export const runtime = "edge";
+// The edge runtime needs next-auth 5
+// export const runtime = "edge";
 
 export async function POST(req: Request): Promise<Response> {
-  if (
-    process.env.NODE_ENV != "development" &&
-    process.env.KV_REST_API_URL &&
-    process.env.KV_REST_API_TOKEN
-  ) {
-    const ip = req.headers.get("x-forwarded-for");
-    const ratelimit = new Ratelimit({
-      redis: kv,
-      limiter: Ratelimit.slidingWindow(50, "1 d"),
+  const ratelimitResponse = await getRatelimitResponse(
+    req.headers.get("x-forwarded-for")!,
+  );
+  if (ratelimitResponse) {
+    return ratelimitResponse;
+  }
+
+  if (!(await getSession())) {
+    return new Response("Unauthorized", {
+      status: 401,
     });
-
-    const { success, limit, reset, remaining } = await ratelimit.limit(
-      `platforms_ratelimit_${ip}`,
-    );
-
-    if (!success) {
-      return new Response("You have reached your request limit for the day.", {
-        status: 429,
-        headers: {
-          "X-RateLimit-Limit": limit.toString(),
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": reset.toString(),
-        },
-      });
-    }
   }
 
   let { prompt: content } = await req.json();
@@ -44,34 +29,30 @@ export async function POST(req: Request): Promise<Response> {
   // slice the content from the end to prioritize later characters
   content = content.replace(/\/$/, "").slice(-5000);
 
-  const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are an AI writing assistant that continues existing text based on context from prior text. " +
-          "Give more weight/priority to the later characters than the beginning ones. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences.",
-        // we're disabling markdown for now until we can figure out a way to stream markdown text with proper formatting: https://github.com/steven-tey/novel/discussions/7
-        // "Use Markdown formatting when appropriate.",
-      },
-      {
-        role: "user",
-        content,
-      },
-    ],
-    temperature: 0.7,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    stream: true,
-    n: 1,
+  const model = new TogetherAI({
+    apiKey: process.env.TOGETHER_API_KEY,
+    modelName: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    maxTokens: 200,
+    stop: ["\n\n", "</s>"],
+    streaming: true,
   });
 
-  // Convert the response into a friendly text-stream
-  const stream = OpenAIStream(response);
+  const prompt = PromptTemplate.fromTemplate(
+    content?.trim()
+      ? "<s> [INST] " +
+          "You are an AI writing assistant that continues existing text based on context from prior text. " +
+          "Give more weight/priority to the later characters than the beginning ones. " +
+          "Limit your response to no more than 200 characters, but make sure to construct complete sentences.\n\n" +
+          "Please complete the following text:\n" +
+          "{content} [/INST] "
+      : "<s> [INST] " +
+          "You are an AI who wants to know useful knowledge from your user. " +
+          "Politely ask the user for useful knowledge and give a few examples that could be relevant " +
+          "for you as an AI. [/INST] ",
+  );
 
-  // Respond with the stream
+  const stream = await prompt
+    .pipe(model)
+    .stream(content?.trim() ? { content } : {});
   return new StreamingTextResponse(stream);
 }

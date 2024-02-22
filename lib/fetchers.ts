@@ -1,17 +1,20 @@
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
-import { serialize } from "next-mdx-remote/serialize";
-import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
+import { getSession } from "@/lib/auth";
+import { Ai, User } from "@prisma/client";
+import { PublicAiData } from "./types";
 
-export async function getSiteData(domain: string) {
+async function fetchAiData(
+  domain: string,
+): Promise<(Ai & { user: User | null }) | null> {
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
 
   return await unstable_cache(
     async () => {
-      return prisma.site.findUnique({
-        where: subdomain ? { subdomain } : { customDomain: domain },
+      return prisma.ai.findUnique({
+        where: subdomain ? { subdomain } : { ownDomain: domain },
         include: { user: true },
       });
     },
@@ -23,111 +26,36 @@ export async function getSiteData(domain: string) {
   )();
 }
 
-export async function getPostsForSite(domain: string) {
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
+export async function getAiData(
+  domain: string,
+): Promise<(Ai & { user: User | null }) | null> {
+  const ai = await fetchAiData(domain);
 
-  return await unstable_cache(
-    async () => {
-      return prisma.post.findMany({
-        where: {
-          site: subdomain ? { subdomain } : { customDomain: domain },
-          published: true,
-        },
-        select: {
-          title: true,
-          description: true,
-          slug: true,
-          image: true,
-          imageBlurhash: true,
-          createdAt: true,
-        },
-        orderBy: [
-          {
-            createdAt: "desc",
-          },
-        ],
-      });
-    },
-    [`${domain}-posts`],
-    {
-      revalidate: 900,
-      tags: [`${domain}-posts`],
-    },
-  )();
+  if (
+    ai?.access === "public" ||
+    ai?.user?.id === (await getSession())?.user.id
+  ) {
+    return ai;
+  }
+
+  return null;
 }
 
-export async function getPostData(domain: string, slug: string) {
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
+export async function getPublicAiData(
+  domain: string,
+): Promise<PublicAiData | null> {
+  const ai = await fetchAiData(domain);
 
-  return await unstable_cache(
-    async () => {
-      const data = await prisma.post.findFirst({
-        where: {
-          site: subdomain ? { subdomain } : { customDomain: domain },
-          slug,
-          published: true,
-        },
-        include: {
-          site: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      });
+  if (!ai) {
+    return null;
+  }
 
-      if (!data) return null;
-
-      const [mdxSource, adjacentPosts] = await Promise.all([
-        getMdxSource(data.content!),
-        prisma.post.findMany({
-          where: {
-            site: subdomain ? { subdomain } : { customDomain: domain },
-            published: true,
-            NOT: {
-              id: data.id,
-            },
-          },
-          select: {
-            slug: true,
-            title: true,
-            createdAt: true,
-            description: true,
-            image: true,
-            imageBlurhash: true,
-          },
-        }),
-      ]);
-
-      return {
-        ...data,
-        mdxSource,
-        adjacentPosts,
-      };
-    },
-    [`${domain}-${slug}`],
-    {
-      revalidate: 900, // 15 minutes
-      tags: [`${domain}-${slug}`],
-    },
-  )();
-}
-
-async function getMdxSource(postContents: string) {
-  // transforms links like <link> to [link](link) as MDX doesn't support <link> syntax
-  // https://mdxjs.com/docs/what-is-mdx/#markdown
-  const content =
-    postContents?.replaceAll(/<(https?:\/\/\S+)>/g, "[$1]($1)") ?? "";
-  // Serialize the content string into MDX
-  const mdxSource = await serialize(content, {
-    mdxOptions: {
-      remarkPlugins: [replaceTweets, () => replaceExamples(prisma)],
-    },
-  });
-
-  return mdxSource;
+  return {
+    id: ai.id,
+    name: ai.name,
+    image: ai.image,
+    userId: ai.userId,
+    subdomain: ai.subdomain,
+    ownDomain: ai.ownDomain,
+  };
 }

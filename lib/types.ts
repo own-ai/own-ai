@@ -1,3 +1,27 @@
+import { type Message } from "ai";
+import { Ai } from "@prisma/client";
+
+export interface Chat extends Record<string, any> {
+  id: string;
+  title: string;
+  createdAt: number;
+  userId: string;
+  path: string;
+  messages: Message[];
+  sharePath?: string;
+}
+
+export interface ConversationStarter {
+  key: number;
+  heading: string;
+  message: string;
+}
+
+export type PublicAiData = Pick<
+  Ai,
+  "id" | "name" | "image" | "userId" | "subdomain" | "ownDomain"
+>;
+
 export type DomainVerificationStatusProps =
   | "Valid Configuration"
   | "Invalid Configuration"
@@ -56,3 +80,10 @@ export interface DomainVerificationResponse {
     reason: string;
   }[];
 }
+
+export type ServerActionResult<Result> = Promise<
+  | Result
+  | {
+      error: string;
+    }
+>;

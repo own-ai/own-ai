@@ -3,17 +3,12 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  BarChart3,
+  Bot,
   Edit3,
-  Globe,
-  Layout,
   LayoutDashboard,
-  Megaphone,
   Menu,
   Newspaper,
   Settings,
-  FileCode,
-  Github,
 } from "lucide-react";
 import {
   useParams,
@@ -21,104 +16,66 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getSiteFromPostId } from "@/lib/actions";
+import { getAiFromKnowledgeId } from "@/lib/actions";
 import Image from "next/image";
 
-const externalLinks = [
-  {
-    name: "Read announcement",
-    href: "https://vercel.com/blog/platforms-starter-kit",
-    icon: <Megaphone width={18} />,
-  },
-  {
-    name: "Star on GitHub",
-    href: "https://github.com/vercel/platforms",
-    icon: <Github width={18} />,
-  },
-  {
-    name: "Read the guide",
-    href: "https://vercel.com/guides/nextjs-multi-tenant-application",
-    icon: <FileCode width={18} />,
-  },
-  {
-    name: "View demo site",
-    href: "https://demo.vercel.pub",
-    icon: <Layout width={18} />,
-  },
-  {
-    name: "Deploy your own",
-    href: "https://vercel.com/templates/next.js/platforms-starter-kit",
-    icon: (
-      <svg
-        width={18}
-        viewBox="0 0 76 76"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="py-1 text-black dark:text-white"
-      >
-        <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" fill="currentColor" />
-      </svg>
-    ),
-  },
-];
+const externalLinks: {
+  name: string;
+  href: string;
+  icon: JSX.Element;
+}[] = [];
 
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
-  const [siteId, setSiteId] = useState<string | null>();
+  const [aiId, setAiId] = useState<string | null>();
 
   useEffect(() => {
-    if (segments[0] === "post" && id) {
-      getSiteFromPostId(id).then((id) => {
-        setSiteId(id);
+    if (segments[0] === "knowledge" && id) {
+      getAiFromKnowledgeId(id).then((id) => {
+        setAiId(id);
       });
     }
   }, [segments, id]);
 
   const tabs = useMemo(() => {
-    if (segments[0] === "site" && id) {
+    if (segments[0] === "ai" && id) {
       return [
         {
-          name: "Back to All Sites",
-          href: "/sites",
+          name: "Back to your AIs",
+          href: "/ais",
           icon: <ArrowLeft width={18} />,
         },
         {
-          name: "Posts",
-          href: `/site/${id}`,
+          name: "AI Knowledge",
+          href: `/ai/${id}`,
           isActive: segments.length === 2,
           icon: <Newspaper width={18} />,
         },
         {
-          name: "Analytics",
-          href: `/site/${id}/analytics`,
-          isActive: segments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
-        },
-        {
-          name: "Settings",
-          href: `/site/${id}/settings`,
+          name: "AI Settings",
+          href: `/ai/${id}/settings`,
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         },
       ];
-    } else if (segments[0] === "post" && id) {
+    } else if (segments[0] === "knowledge" && id) {
       return [
         {
-          name: "Back to All Posts",
-          href: siteId ? `/site/${siteId}` : "/sites",
+          name: "Back to the AI",
+          href: aiId ? `/ai/${aiId}` : "/ais",
           icon: <ArrowLeft width={18} />,
         },
         {
-          name: "Editor",
-          href: `/post/${id}`,
+          name: "Knowledge Editor",
+          href: `/knowledge/${id}`,
           isActive: segments.length === 2,
           icon: <Edit3 width={18} />,
         },
         {
-          name: "Settings",
-          href: `/post/${id}/settings`,
+          name: "Knowledge Settings",
+          href: `/knowledge/${id}/settings`,
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         },
@@ -132,10 +89,10 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Sites",
-        href: "/sites",
-        isActive: segments[0] === "sites",
-        icon: <Globe width={18} />,
+        name: "AIs",
+        href: "/ais",
+        isActive: segments[0] === "ais",
+        icon: <Bot width={18} />,
       },
       {
         name: "Settings",
@@ -144,7 +101,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id, siteId]);
+  }, [segments, id, aiId]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -160,7 +117,7 @@ export default function Nav({ children }: { children: ReactNode }) {
       <button
         className={`fixed z-20 ${
           // left align for Editor, right align for other pages
-          segments[0] === "post" && segments.length === 2 && !showSidebar
+          segments[0] === "knowledge" && segments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
         } sm:hidden`}
@@ -174,35 +131,15 @@ export default function Nav({ children }: { children: ReactNode }) {
         } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">
-          <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
-            <a
-              href="https://vercel.com/templates/next.js/platforms-starter-kit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg p-1.5 hover:bg-stone-200 dark:hover:bg-stone-700"
-            >
-              <svg
-                width="26"
-                viewBox="0 0 76 65"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-black dark:text-white"
-              >
-                <path
-                  d="M37.5274 0L75.0548 65H0L37.5274 0Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </a>
-            <div className="h-6 rotate-[30deg] border-l border-stone-400 dark:border-stone-500" />
+          <div className="flex items-center space-x-2 rounded-lg py-1.5">
             <Link
               href="/"
               className="rounded-lg p-2 hover:bg-stone-200 dark:hover:bg-stone-700"
             >
               <Image
                 src="/logo.png"
-                width={24}
-                height={24}
+                width={48}
+                height={48}
                 alt="Logo"
                 className="dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
               />

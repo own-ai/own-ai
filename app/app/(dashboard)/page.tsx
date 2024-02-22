@@ -1,28 +1,35 @@
 import { Suspense } from "react";
-import Sites from "@/components/sites";
-import OverviewStats from "@/components/overview-stats";
-import Posts from "@/components/posts";
-import Link from "next/link";
+import Ais from "@/components/ais";
+import Knowledges from "@/components/knowledges";
 import PlaceholderCard from "@/components/placeholder-card";
-import OverviewSitesCTA from "@/components/overview-sites-cta";
+import OverviewAisCTA from "@/components/overview-ais-cta";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
 
-export default function Overview() {
+export default async function Overview() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const hasKnowledge = !!(await prisma.knowledge.count({
+    where: {
+      user: {
+        id: session.user.id as string,
+      },
+    },
+  }));
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Overview
-        </h1>
-        <OverviewStats />
-      </div>
-
-      <div className="flex flex-col space-y-6">
+      <div className="mt-12 flex flex-col space-y-6 sm:mt-0">
         <div className="flex items-center justify-between">
           <h1 className="font-cal text-3xl font-bold dark:text-white">
-            Top Sites
+            Recent AIs
           </h1>
           <Suspense fallback={null}>
-            <OverviewSitesCTA />
+            <OverviewAisCTA />
           </Suspense>
         </div>
         <Suspense
@@ -34,26 +41,28 @@ export default function Overview() {
             </div>
           }
         >
-          <Sites limit={4} />
+          <Ais limit={4} />
         </Suspense>
       </div>
 
-      <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Recent Posts
-        </h1>
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <PlaceholderCard key={i} />
-              ))}
-            </div>
-          }
-        >
-          <Posts limit={8} />
-        </Suspense>
-      </div>
+      {!hasKnowledge ? null : (
+        <div className="flex flex-col space-y-6">
+          <h1 className="font-cal text-3xl font-bold dark:text-white">
+            Recent Knowledge
+          </h1>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <PlaceholderCard key={i} />
+                ))}
+              </div>
+            }
+          >
+            <Knowledges limit={8} />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 }

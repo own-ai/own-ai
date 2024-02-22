@@ -1,130 +1,168 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { Post } from "@prisma/client";
-import { updatePost, updatePostMetadata } from "@/lib/actions";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { Knowledge } from "@prisma/client";
+import { updateKnowledge } from "@/lib/actions";
 import { Editor as NovelEditor } from "novel";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
-import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Bot } from "lucide-react";
+import { useDebouncedCallback } from "use-debounce";
 
-type PostWithSite = Post & { site: { subdomain: string | null } | null };
+type KnowledgeWithAi = Knowledge & {
+  ai: {
+    name: string | null;
+    subdomain: string | null;
+    ownDomain: string | null;
+  } | null;
+};
 
-export default function Editor({ post }: { post: PostWithSite }) {
+export default function Editor({ knowledge }: { knowledge: KnowledgeWithAi }) {
   let [isPendingSaving, startTransitionSaving] = useTransition();
-  let [isPendingPublishing, startTransitionPublishing] = useTransition();
-  const [data, setData] = useState<PostWithSite>(post);
-  const [hydrated, setHydrated] = useState(false);
+  let [isPendingLearning, startTransitionLearning] = useTransition();
+  const [data, setData] = useState<KnowledgeWithAi>(knowledge);
+  const aiUrl =
+    data.ai?.ownDomain ??
+    `${data.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
-  const url = process.env.NEXT_PUBLIC_VERCEL_ENV
-    ? `https://${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`
-    : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`;
+  const saveChanges = useCallback(() => {
+    if (
+      data.title === knowledge.title &&
+      data.description === knowledge.description &&
+      data.content === knowledge.content
+    ) {
+      return;
+    }
+    startTransitionSaving(async () => {
+      setData((prev) => ({ ...prev, learned: false }));
+      await updateKnowledge({ ...data, learned: false });
+    });
+  }, [data, knowledge]);
+
+  const saveChangesDebounced = useDebouncedCallback(saveChanges, 1000);
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey && e.key === "s") {
         e.preventDefault();
-        startTransitionSaving(async () => {
-          await updatePost(data);
-        });
+        saveChanges();
       }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [data, startTransitionSaving]);
+  }, [saveChanges]);
 
   return (
-    <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
-      <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
-        {data.published && (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-sm text-stone-400 hover:text-stone-500"
-          >
-            <ExternalLink className="h-4 w-4" />
-          </a>
-        )}
-        <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
-          {isPendingSaving ? "Saving..." : "Saved"}
-        </div>
-        <button
-          onClick={() => {
-            const formData = new FormData();
-            console.log(data.published, typeof data.published);
-            formData.append("published", String(!data.published));
-            startTransitionPublishing(async () => {
-              await updatePostMetadata(formData, post.id, "published").then(
-                () => {
-                  toast.success(
-                    `Successfully ${
-                      data.published ? "unpublished" : "published"
-                    } your post.`,
-                  );
-                  setData((prev) => ({ ...prev, published: !prev.published }));
-                },
-              );
-            });
-          }}
-          className={cn(
-            "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg border text-sm transition-all focus:outline-none",
-            isPendingPublishing
-              ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-              : "border border-black bg-black text-white hover:bg-white hover:text-black active:bg-stone-100 dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800",
-          )}
-          disabled={isPendingPublishing}
-        >
-          {isPendingPublishing ? (
-            <LoadingDots />
+    <>
+      <Alert variant={data.learned ? "default" : "destructive"}>
+        <Bot className="h-4 w-4" />
+        <AlertTitle>
+          {data.learned
+            ? `${data.ai?.name} learned this knowledge`
+            : "Knowledge not learned yet"}
+        </AlertTitle>
+        <AlertDescription>
+          {data.learned ? (
+            <p>
+              I have learned this knowledge. You can talk with me about it by
+              visiting my URL{" "}
+              <a
+                href={
+                  process.env.NEXT_PUBLIC_VERCEL_ENV
+                    ? `https://${aiUrl}`
+                    : `http://${data.ai?.subdomain}.localhost:3000`
+                }
+                target="_blank"
+                rel="noreferrer"
+                className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+              >
+                {aiUrl} ↗
+              </a>
+            </p>
           ) : (
-            <p>{data.published ? "Unpublish" : "Publish"}</p>
+            <p>
+              Please click the <strong>Learn</strong> button to teach this
+              content to your AI.
+            </p>
           )}
-        </button>
-      </div>
-      <div className="mb-5 flex flex-col space-y-3 border-b border-stone-200 pb-5 dark:border-stone-700">
-        <input
-          type="text"
-          placeholder="Title"
-          defaultValue={post?.title || ""}
-          autoFocus
-          onChange={(e) => setData({ ...data, title: e.target.value })}
-          className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+        </AlertDescription>
+      </Alert>
+      <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+        <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
+          <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
+            {isPendingSaving ? "Saving..." : "Saved"}
+          </div>
+          <button
+            onClick={() => {
+              startTransitionLearning(async () => {
+                await updateKnowledge({ ...data, learned: !data.learned }).then(
+                  () => {
+                    toast.success(
+                      `Successfully ${
+                        data.learned ? "unlearned" : "learned"
+                      } your knowledge.`,
+                    );
+                    setData((prev) => ({ ...prev, learned: !prev.learned }));
+                  },
+                );
+              });
+            }}
+            className={cn(
+              "flex h-7 w-24 items-center justify-center space-x-2 rounded-lg border text-sm transition-all focus:outline-none",
+              isPendingLearning
+                ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
+                : "border border-black bg-black text-white hover:bg-white hover:text-black active:bg-stone-100 dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800",
+            )}
+            disabled={isPendingLearning}
+          >
+            {isPendingLearning ? (
+              <LoadingDots />
+            ) : (
+              <p>{data.learned ? "Unlearn" : "Learn"}</p>
+            )}
+          </button>
+        </div>
+        <div className="mb-5 flex flex-col space-y-3 border-b border-stone-200 pb-5 dark:border-stone-700">
+          <input
+            type="text"
+            placeholder="Title"
+            defaultValue={knowledge?.title || ""}
+            autoFocus
+            onChange={(e) => {
+              setData({ ...data, title: e.target.value });
+              saveChangesDebounced();
+            }}
+            className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          />
+          <TextareaAutosize
+            placeholder="Description"
+            defaultValue={knowledge?.description || ""}
+            onChange={(e) => {
+              setData({ ...data, description: e.target.value });
+              saveChangesDebounced();
+            }}
+            className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          />
+        </div>
+        <NovelEditor
+          className="relative block"
+          defaultValue={knowledge?.content || ""}
+          onUpdate={(editor) => {
+            setData((prev) => ({
+              ...prev,
+              content: editor?.storage.markdown.getMarkdown(),
+            }));
+          }}
+          onDebouncedUpdate={saveChanges}
+          disableLocalStorage={true}
         />
-        <TextareaAutosize
-          placeholder="Description"
-          defaultValue={post?.description || ""}
-          onChange={(e) => setData({ ...data, description: e.target.value })}
-          className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
-        />
       </div>
-      <NovelEditor
-        className="relative block"
-        defaultValue={post?.content || undefined}
-        onUpdate={(editor) => {
-          setData((prev) => ({
-            ...prev,
-            content: editor?.storage.markdown.getMarkdown(),
-          }));
-        }}
-        onDebouncedUpdate={() => {
-          if (
-            data.title === post.title &&
-            data.description === post.description &&
-            data.content === post.content
-          ) {
-            return;
-          }
-          startTransitionSaving(async () => {
-            await updatePost(data);
-          });
-        }}
-      />
-    </div>
+    </>
   );
 }
