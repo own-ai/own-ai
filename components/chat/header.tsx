@@ -35,7 +35,17 @@ async function SidebarAndTitle({ title }: { title: string }) {
 async function UserOrLogin({ ai }: { ai: PublicAiData | null }) {
   const session = await getSession();
   if (session?.user) {
-    return <UserMenu user={session.user} ai={ai} />;
+    return (
+      <UserMenu
+        user={session.user}
+        ai={ai}
+        appBaseUrl={
+          process.env.NEXT_PUBLIC_VERCEL_ENV
+            ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+            : `http://app.localhost:3000`
+        }
+      />
+    );
   }
 
   return (

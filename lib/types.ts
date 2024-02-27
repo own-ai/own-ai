@@ -22,6 +22,12 @@ export type PublicAiData = Pick<
   "id" | "name" | "image" | "userId" | "subdomain" | "ownDomain"
 >;
 
+export type NavItem = {
+  title: string;
+  href: string;
+  disabled?: boolean;
+};
+
 export type DomainVerificationStatusProps =
   | "Valid Configuration"
   | "Invalid Configuration"

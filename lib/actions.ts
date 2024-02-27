@@ -82,9 +82,12 @@ export const updateAi = withAiAuth(
       let response;
 
       if (key === "ownDomain") {
-        if (value.includes("ownai.com")) {
+        if (
+          process.env.NEXT_PUBLIC_ROOT_DOMAIN &&
+          value.includes(process.env.NEXT_PUBLIC_ROOT_DOMAIN)
+        ) {
           return {
-            error: "Cannot use ownai.com subdomain as your own domain",
+            error: `Cannot use ${process.env.NEXT_PUBLIC_ROOT_DOMAIN} subdomain as your own domain`,
           };
         }
 

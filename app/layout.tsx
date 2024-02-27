@@ -18,7 +18,11 @@ export const metadata: Metadata = {
     description,
     images: [image],
   },
-  metadataBase: new URL("https://ownai.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_VERCEL_ENV
+      ? `https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+      : "http://localhost:3000",
+  ),
 };
 
 export default function RootLayout({
