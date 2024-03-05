@@ -1,12 +1,23 @@
-import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
+
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 
 export default async function AiSettingsDomains({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+
   const data = await prisma.ai.findUnique({
     where: {
       id: decodeURIComponent(params.id),
@@ -29,16 +40,18 @@ export default async function AiSettingsDomains({
       />
       <Form
         title="Own Domain"
-        description="Set your own domain for your AI! For example, this could be a subdomain of your company or a personal domain under which you want to make your AI accessible."
-        helpText="Please enter a valid domain that you own (e.g. yourai.com or ai.yourcompany.com)."
+        description="Set your own domain for your AI! For example, this could be a subdomain of your company or a personal domain under which you want to run your AI."
         inputAttrs={{
           name: "ownDomain",
           type: "text",
           defaultValue: data?.ownDomain!,
           maxLength: 200,
           pattern: "^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$",
+          placeholder: "e.g. yourai.com or ai.yourcompany.com",
         }}
         handleSubmit={updateAi}
+        needsPro={true}
+        hasPro={subscriptionPlan.isPro}
       />
     </div>
   );

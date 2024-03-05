@@ -1,10 +1,27 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
+
 import Ais from "@/components/ais";
 import PlaceholderCard from "@/components/placeholder-card";
 import CreateAiButton from "@/components/create-ai-button";
 import CreateAiModal from "@/components/modal/create-ai";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 
-export default function AllAis({ params }: { params: { id: string } }) {
+export default async function AllAisPage() {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+  const aiCount = await prisma.ai.count({
+    where: {
+      userId: session.user.id,
+    },
+  });
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="mt-12 flex flex-col space-y-6 sm:mt-0">
@@ -13,7 +30,10 @@ export default function AllAis({ params }: { params: { id: string } }) {
             Your AIs
           </h1>
           <CreateAiButton>
-            <CreateAiModal />
+            <CreateAiModal
+              subscriptionPlan={subscriptionPlan}
+              currentAiCount={aiCount}
+            />
           </CreateAiButton>
         </div>
         <Suspense
@@ -25,8 +45,7 @@ export default function AllAis({ params }: { params: { id: string } }) {
             </div>
           }
         >
-          {/* @ts-expect-error Server Component */}
-          <Ais aiId={decodeURIComponent(params.id)} />
+          <Ais />
         </Suspense>
       </div>
     </div>

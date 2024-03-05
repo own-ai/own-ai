@@ -12,7 +12,7 @@ export default async function Profile() {
   }
 
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex w-full max-w-[90%] items-center justify-between">
       <Link
         href="/settings"
         className="flex w-full flex-1 items-center space-x-3 rounded-lg px-2 py-1.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800"

@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 import AiCard from "./ai-card";
 import CreateAiButton from "./create-ai-button";
 import CreateAiModal from "./modal/create-ai";
@@ -10,6 +11,9 @@ export default async function Ais({ limit }: { limit?: number }) {
   if (!session) {
     redirect("/login");
   }
+
+  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+
   const ais = await prisma.ai.findMany({
     where: {
       user: {
@@ -35,7 +39,7 @@ export default async function Ais({ limit }: { limit?: number }) {
         You don&#39;t have any AIs yet. Create one to get started.
       </p>
       <CreateAiButton>
-        <CreateAiModal />
+        <CreateAiModal subscriptionPlan={subscriptionPlan} currentAiCount={0} />
       </CreateAiButton>
     </div>
   );

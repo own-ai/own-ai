@@ -1,5 +1,5 @@
 import { type Message } from "ai";
-import { Ai } from "@prisma/client";
+import { Ai, User } from "@prisma/client";
 
 export interface Chat extends Record<string, any> {
   id: string;
@@ -93,3 +93,14 @@ export type ServerActionResult<Result> = Promise<
       error: string;
     }
 >;
+
+export type SubscriptionPlan = {
+  name: "Free" | "PRO";
+  stripePriceId: string | null;
+};
+
+export type UserSubscriptionPlan = SubscriptionPlan &
+  Pick<User, "stripeCustomerId" | "stripeSubscriptionId"> & {
+    stripeCurrentPeriodEnd: number | null;
+    isPro: boolean;
+  };

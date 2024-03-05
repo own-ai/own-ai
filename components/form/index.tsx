@@ -21,10 +21,12 @@ export default function Form({
   helpText,
   inputAttrs,
   handleSubmit,
+  needsPro,
+  hasPro,
 }: {
   title: string;
   description: string;
-  helpText: string;
+  helpText?: string;
   inputAttrs: {
     name: string;
     type: string;
@@ -34,6 +36,8 @@ export default function Form({
     pattern?: string;
   };
   handleSubmit: any;
+  needsPro?: boolean;
+  hasPro?: boolean;
 }) {
   const { id } = useParams() as { id?: string };
   const router = useRouter();
@@ -141,17 +145,23 @@ export default function Form({
             </div>
           </div>
         ) : inputAttrs.name === "ownDomain" ? (
-          <div className="relative flex w-full max-w-md">
-            <input
-              {...inputAttrs}
-              className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-            />
-            {inputAttrs.defaultValue && (
-              <div className="absolute right-3 z-10 flex h-full items-center">
-                <DomainStatus domain={inputAttrs.defaultValue} />
-              </div>
-            )}
-          </div>
+          <>
+            <p className="text-sm text-stone-500 dark:text-stone-400">
+              Please enter a domain that you <strong>already own</strong>.
+              Contact us if you need help registering a domain.
+            </p>
+            <div className="relative flex w-full max-w-md">
+              <input
+                {...inputAttrs}
+                className="z-10 flex-1 rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+              />
+              {inputAttrs.defaultValue && (
+                <div className="absolute right-3 z-10 flex h-full items-center">
+                  <DomainStatus domain={inputAttrs.defaultValue} />
+                </div>
+              )}
+            </div>
+          </>
         ) : inputAttrs.name === "instructions" ? (
           <textarea
             {...inputAttrs}
@@ -185,8 +195,30 @@ export default function Form({
         <DomainConfiguration domain={inputAttrs.defaultValue} />
       )}
       <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10">
-        <p className="text-sm text-stone-500 dark:text-stone-400">{helpText}</p>
-        <FormButton />
+        <p className="text-sm text-stone-500 dark:text-stone-400">
+          {helpText ||
+            (needsPro ? (
+              <>
+                Available in{" "}
+                <strong className="inline-block bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                  PRO
+                </strong>
+              </>
+            ) : null)}
+        </p>
+        {needsPro && !hasPro ? (
+          <button
+            className="flex h-8 w-32 items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800 sm:h-10"
+            onClick={(event) => {
+              event.preventDefault();
+              router.push("/settings");
+            }}
+          >
+            <p>Upgrade to PRO</p>
+          </button>
+        ) : (
+          <FormButton />
+        )}
       </div>
     </form>
   );

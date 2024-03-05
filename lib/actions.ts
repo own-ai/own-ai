@@ -19,6 +19,7 @@ import { getBlurDataURL } from "@/lib/utils";
 import { getRatelimitResponse } from "./ratelimit";
 import { headers } from "next/headers";
 import { generateEmbeddings } from "./embeddings";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -32,6 +33,19 @@ export const createAi = async (formData: FormData) => {
       error: "Not authenticated",
     };
   }
+
+  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+  const aiCount = await prisma.ai.count({
+    where: {
+      userId: session.user.id,
+    },
+  });
+  if (!subscriptionPlan.isPro && aiCount >= 3) {
+    return {
+      error: "Please upgrade to PRO to have more than 3 AIs.",
+    };
+  }
+
   const name = formData.get("name") as string;
   const instructions = formData.get("instructions") as string;
   const subdomain = formData.get("subdomain") as string;

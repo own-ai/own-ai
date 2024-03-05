@@ -170,6 +170,8 @@ export const isValidSubdomain = (subdomain: string) => {
     "example",
     "demo",
     "app",
+    "pay",
+    "bounce",
   ];
   return !forbiddenSubdomains.includes(subdomain.toLowerCase());
 };

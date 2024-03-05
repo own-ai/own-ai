@@ -15,7 +15,11 @@ export default function HomePage() {
             Focus on Privacy
           </Link>
           <h1 className="font-cal text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-            Have your own AI
+            Have your{" "}
+            <span className="inline-block bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+              own
+            </span>{" "}
+            AI
           </h1>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
             Create your own personal AI assistant to help you with your work. Or
@@ -148,8 +152,8 @@ export default function HomePage() {
               <div className="space-y-2">
                 <h3 className="font-bold">ai.yourcompany.com</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your privacy-focused alternative for internal team
-                  collaboration.
+                  Your privacy-focused alternative for a team internal AI
+                  chatbot.
                 </p>
               </div>
             </div>
