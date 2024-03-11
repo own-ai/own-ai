@@ -30,7 +30,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const session = await getSession();
 
   if (!session?.user) {
-    redirect(`/sign-in?next=/chat/${params.id}`);
+    redirect("/login");
   }
 
   const chat = await getChat(params.id, session.user.id);

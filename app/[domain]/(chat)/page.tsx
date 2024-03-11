@@ -17,7 +17,7 @@ export default async function IndexPage({
     if (await getSession()) {
       notFound();
     } else {
-      redirect("/sign-in?next=/");
+      redirect("/login");
     }
   }
 

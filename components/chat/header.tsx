@@ -40,7 +40,7 @@ async function UserOrLogin({ ai }: { ai: PublicAiData | null }) {
 
   return (
     <Button variant="link" asChild className="-ml-2">
-      <Link href="/sign-in?callbackUrl=/">Login</Link>
+      <Link href="/login">Login</Link>
     </Button>
   );
 }

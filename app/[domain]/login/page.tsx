@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -19,14 +19,9 @@ export default function SignInPage() {
     .querySelectorAll('meta[property="og:image"]')?.[0]
     ?.getAttribute("content");
 
-  // Get error message added by next-auth in URL.
+  // Get error added by next-auth in URL.
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
-
-  useEffect(() => {
-    const errorMessage = Array.isArray(error) ? error.pop() : error;
-    errorMessage && toast.error(errorMessage);
-  }, [error]);
 
   return (
     <div className="mx-5 my-10 border border-stone-200 bg-background py-10 text-foreground dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
@@ -40,8 +35,14 @@ export default function SignInPage() {
         />
       ) : null}
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
-        {submitted ? "Check your e-mail" : title}
+        {submitted ? "Check your e-mail" : error ? "Unable to sign in" : title}
       </h1>
+      {!submitted && error === "Verification" ? (
+        <p className="mx-2 mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
+          The sign in link is no longer valid. It may have been used already or
+          it may have expired. Please try again.
+        </p>
+      ) : null}
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
         {submitted
           ? "I sent a sign in link to your e-mail address."
