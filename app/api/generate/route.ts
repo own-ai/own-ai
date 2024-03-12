@@ -1,5 +1,3 @@
-"use server";
-
 import { StreamingTextResponse } from "ai";
 import { TogetherAI } from "@langchain/community/llms/togetherai";
 import { PromptTemplate } from "@langchain/core/prompts";

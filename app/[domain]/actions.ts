@@ -7,16 +7,21 @@ import { kv } from "@vercel/kv";
 import { getSession } from "@/lib/auth";
 import { type Chat } from "@/lib/types";
 
-export async function getChats(userId?: string | null) {
-  if (!userId) {
+export async function getChats(userId?: string | null, aiId?: string | null) {
+  if (!userId || !aiId) {
     return [];
   }
 
   try {
     const pipeline = kv.pipeline();
-    const chats: string[] = await kv.zrange(`user:chat:${userId}`, 0, -1, {
-      rev: true,
-    });
+    const chats: string[] = await kv.zrange(
+      `user:${userId}:ai:${aiId}`,
+      0,
+      -1,
+      {
+        rev: true,
+      },
+    );
 
     for (const chat of chats) {
       pipeline.hgetall(chat);
@@ -33,7 +38,7 @@ export async function getChats(userId?: string | null) {
 export async function getChat(id: string, userId: string) {
   const chat = await kv.hgetall<Chat>(`chat:${id}`);
 
-  if (!chat || (userId && chat.userId !== userId)) {
+  if (!chat || chat.userId !== userId) {
     return null;
   }
 
@@ -58,14 +63,20 @@ export async function removeChat({ id, path }: { id: string; path: string }) {
     };
   }
 
+  const aiId = String(await kv.hget(`chat:${id}`, "aiId"));
+
   await kv.del(`chat:${id}`);
-  await kv.zrem(`user:chat:${session.user.id}`, `chat:${id}`);
+  await kv.zrem(`user:${session.user.id}:ai:${aiId}`, `chat:${id}`);
 
   revalidatePath("/");
   return revalidatePath(path);
 }
 
-export async function clearChats() {
+export async function clearChats(aiId?: string | null) {
+  if (!aiId) {
+    return;
+  }
+
   const session = await getSession();
 
   if (!session?.user?.id) {
@@ -75,7 +86,7 @@ export async function clearChats() {
   }
 
   const chats: string[] = await kv.zrange(
-    `user:chat:${session.user.id}`,
+    `user:${session.user.id}:ai:${aiId}`,
     0,
     -1,
   );
@@ -86,7 +97,7 @@ export async function clearChats() {
 
   for (const chat of chats) {
     pipeline.del(chat);
-    pipeline.zrem(`user:chat:${session.user.id}`, chat);
+    pipeline.zrem(`user:${session.user.id}:ai:${aiId}`, chat);
   }
 
   await pipeline.exec();

@@ -1,5 +1,3 @@
-"use server";
-
 import { kv } from "@vercel/kv";
 import { Message, StreamingTextResponse } from "ai";
 import { ChatTogetherAI } from "@langchain/community/chat_models/togetherai";
@@ -101,6 +99,7 @@ export async function POST(req: Request) {
               id,
               title,
               userId,
+              aiId: ai.id,
               createdAt,
               path,
               messages: [
@@ -112,7 +111,7 @@ export async function POST(req: Request) {
               ],
             };
             await kv.hmset(`chat:${id}`, payload);
-            await kv.zadd(`user:chat:${userId}`, {
+            await kv.zadd(`user:${userId}:ai:${ai.id}`, {
               score: createdAt,
               member: `chat:${id}`,
             });

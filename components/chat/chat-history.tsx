@@ -8,9 +8,10 @@ import { IconPlus } from "@/components/ui/icons";
 
 interface ChatHistoryProps {
   userId?: string;
+  aiId?: string;
 }
 
-export async function ChatHistory({ userId }: ChatHistoryProps) {
+export async function ChatHistory({ userId, aiId }: ChatHistoryProps) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between p-4">
@@ -40,8 +41,7 @@ export async function ChatHistory({ userId }: ChatHistoryProps) {
           </div>
         }
       >
-        {/* @ts-ignore */}
-        <SidebarList userId={userId} />
+        <SidebarList userId={userId} aiId={aiId} />
       </React.Suspense>
     </div>
   );

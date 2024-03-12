@@ -6,15 +6,16 @@ import { cache } from "react";
 
 interface SidebarListProps {
   userId?: string;
+  aiId?: string;
   children?: React.ReactNode;
 }
 
-const loadChats = cache(async (userId?: string) => {
-  return await getChats(userId);
+const loadChats = cache(async (userId?: string, aiId?: string) => {
+  return await getChats(userId, aiId);
 });
 
-export async function SidebarList({ userId }: SidebarListProps) {
-  const chats = await loadChats(userId);
+export async function SidebarList({ userId, aiId }: SidebarListProps) {
+  const chats = await loadChats(userId, aiId);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -31,7 +32,11 @@ export async function SidebarList({ userId }: SidebarListProps) {
       </div>
       <div className="flex items-center justify-between p-4">
         <ThemeToggle />
-        <ClearHistory clearChats={clearChats} isEnabled={chats?.length > 0} />
+        <ClearHistory
+          clearChats={clearChats}
+          isEnabled={chats?.length > 0}
+          aiId={aiId}
+        />
       </div>
     </div>
   );
