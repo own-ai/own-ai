@@ -18,7 +18,7 @@ export default async function AiSettingsAppearance({
       <Form
         title="Image"
         description="An image for your AI. Accepted formats: .png, .jpg, .jpeg. The image is displayed on the login page of your AI and is therefore visible even if the AI is not public."
-        helpText="Max file size 50MB. Recommended size 1200x630."
+        helpText="Max file size 4 MB. Recommended size 1200x630."
         inputAttrs={{
           name: "image",
           type: "file",

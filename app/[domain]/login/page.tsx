@@ -17,7 +17,8 @@ export default function SignInPage() {
     ?.getAttribute("content");
   const image = document
     .querySelectorAll('meta[property="og:image"]')?.[0]
-    ?.getAttribute("content");
+    ?.getAttribute("content")
+    ?.replace(`${window.location.protocol}//${window.location.host}`, "");
 
   // Get error added by next-auth in URL.
   const searchParams = useSearchParams();
