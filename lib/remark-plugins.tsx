@@ -12,11 +12,19 @@ export function replaceLinks({
   // replaces internal links with <Link /> component
   // and external links with <a target="_blank" />
   return href?.startsWith("/") || href === "" ? (
-    <Link href={href} className="cursor-pointer">
+    <Link
+      href={href}
+      className="cursor-pointer font-semibold underline decoration-stone-500 underline-offset-4 dark:decoration-stone-400"
+    >
       {children}
     </Link>
   ) : (
-    <a href={href} target="_blank" rel="noopener noreferrer">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-semibold underline decoration-stone-500 underline-offset-4 dark:decoration-stone-400"
+    >
       {children} ↗
     </a>
   );

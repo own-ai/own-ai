@@ -27,7 +27,7 @@ export function EmptyScreen({
       <div className="rounded-lg border bg-background p-8">
         {welcome ? <MDX source={welcome} /> : null}
         <div className="mt-4 flex flex-col items-start space-y-2">
-          {exampleMessages.map((message, index) => (
+          {(exampleMessages || []).map((message, index) => (
             <Button
               key={index}
               variant="link"
