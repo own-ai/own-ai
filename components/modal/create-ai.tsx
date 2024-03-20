@@ -141,15 +141,24 @@ export default function CreateAiModal({
                 className="w-full rounded-lg border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
               >
                 <option value="private">Private</option>
-                <option value="members" disabled>
-                  Team (coming soon)
-                </option>
+                <option value="members">Team</option>
                 <option value="public">Public</option>
               </select>
-              <p className="px-4 text-sm text-stone-500 dark:text-stone-400">
-                {data.access === "private"
-                  ? "Only you can teach and use the AI."
-                  : "Anyone can use the AI. Only you can teach it."}
+              <p className="text-sm text-stone-500 dark:text-stone-400">
+                {data.access === "private" ? (
+                  "Only you can use and teach the AI."
+                ) : data.access === "members" ? (
+                  <>
+                    You specify email addresses that can use or teach the AI.
+                    Available in{" "}
+                    <strong className="inline-block bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                      PRO
+                    </strong>
+                    .
+                  </>
+                ) : (
+                  "Anyone can use the AI. Only you can teach it."
+                )}
               </p>
             </div>
             <div className="flex flex-col space-y-2">
@@ -174,7 +183,8 @@ export default function CreateAiModal({
         )}
       </div>
       <div className="flex items-center justify-end rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 md:px-10">
-        {!subscriptionPlan.isPro && currentAiCount >= 3 ? (
+        {!subscriptionPlan.isPro &&
+        (currentAiCount >= 3 || data.access === "members") ? (
           <button
             className="flex h-10 w-full items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800"
             onClick={(event) => {

@@ -14,7 +14,7 @@ export default async function Ais({ limit }: { limit?: number }) {
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
 
-  const ais = await prisma.ai.findMany({
+  const ownAis = await prisma.ai.findMany({
     where: {
       user: {
         id: session.user.id as string,
@@ -25,6 +25,25 @@ export default async function Ais({ limit }: { limit?: number }) {
     },
     ...(limit ? { take: limit } : {}),
   });
+
+  const memberAis = await prisma.ai.findMany({
+    where: {
+      members: {
+        array_contains: [
+          {
+            email: session.user.email,
+            role: "teacher",
+          },
+        ],
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    ...(limit ? { take: limit - ownAis.length } : {}),
+  });
+
+  const ais = [...ownAis, ...memberAis];
 
   return ais.length > 0 ? (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

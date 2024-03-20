@@ -59,7 +59,7 @@ export default async function Overview() {
               </div>
             }
           >
-            <Knowledges limit={8} />
+            <Knowledges userId={session.user.id} limit={8} />
           </Suspense>
         </div>
       )}

@@ -6,28 +6,33 @@ import CreateKnowledgeButton from "@/components/create-knowledge-button";
 
 export default async function Knowledges({
   aiId,
+  userId,
   limit,
 }: {
   aiId?: string;
+  userId?: string;
   limit?: number;
 }) {
   const session = await getSession();
   if (!session?.user) {
     redirect("/login");
   }
-  const knowledges = await prisma.knowledge.findMany({
-    where: {
-      userId: session.user.id as string,
-      ...(aiId ? { aiId } : {}),
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    include: {
-      ai: true,
-    },
-    ...(limit ? { take: limit } : {}),
-  });
+  const knowledges =
+    aiId || userId
+      ? await prisma.knowledge.findMany({
+          where: {
+            ...(userId ? { userId: session.user.id as string } : {}),
+            ...(aiId ? { aiId } : {}),
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          include: {
+            ai: true,
+          },
+          ...(limit ? { take: limit } : {}),
+        })
+      : [];
 
   return knowledges.length > 0 ? (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

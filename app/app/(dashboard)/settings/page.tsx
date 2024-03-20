@@ -44,13 +44,15 @@ export default async function SettingsPage() {
         />
         <Form
           title="E-mail"
-          description="Please keep your e-mail address up-to-date. You will need access to your mails when you log in to ownAI."
+          description="Please contact us if you would like to change your e-mail address."
           helpText=""
           inputAttrs={{
             name: "email",
             type: "email",
             defaultValue: session.user.email!,
+            disabled: true,
           }}
+          contactUs={true}
           handleSubmit={editUser}
         />
         <BillingForm

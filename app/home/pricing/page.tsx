@@ -75,7 +75,7 @@ export default function PricingPage() {
               <Check className="mr-2 h-4 w-4" /> Subdomains and Custom Domains
             </li>
             <li className="flex items-center">
-              <Check className="mr-2 h-4 w-4" /> Team AIs (coming soon)
+              <Check className="mr-2 h-4 w-4" /> Team AIs
             </li>
           </ul>
         </div>

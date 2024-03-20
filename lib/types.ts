@@ -17,6 +17,23 @@ export interface ConversationStarter {
   message: string;
 }
 
+export type AiMemberRole = "user" | "teacher";
+
+export interface AiMember {
+  key: number;
+  email: string;
+  role: AiMemberRole;
+}
+
+export function isAiMember(object: any): object is AiMember {
+  if (typeof object !== "object") {
+    return false;
+  }
+
+  const objAsAiMember = object as AiMember;
+  return objAsAiMember.email !== undefined && objAsAiMember.role !== undefined;
+}
+
 export type PublicAiData = Pick<
   Ai,
   "id" | "name" | "image" | "userId" | "subdomain" | "ownDomain"

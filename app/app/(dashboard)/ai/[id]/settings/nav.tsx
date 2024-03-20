@@ -2,10 +2,15 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 
-export default function AiSettingsNav() {
-  const { id } = useParams() as { id?: string };
+export default function AiSettingsNav({
+  id,
+  isTeamAi,
+}: {
+  id: string;
+  isTeamAi: boolean;
+}) {
   const segment = useSelectedLayoutSegment();
 
   const navItems = [
@@ -25,6 +30,14 @@ export default function AiSettingsNav() {
       segment: "appearance",
     },
   ];
+
+  if (isTeamAi) {
+    navItems.push({
+      name: "Team",
+      href: `/ai/${id}/settings/team`,
+      segment: "team",
+    });
+  }
 
   return (
     <div className="flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">

@@ -1,17 +1,28 @@
-import prisma from "@/lib/prisma";
+import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export default async function AiSettingsAppearance({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
   const data = await prisma.ai.findUnique({
     where: {
       id: decodeURIComponent(params.id),
     },
   });
+
+  if (!data || data.userId !== session.user.id) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col space-y-6">

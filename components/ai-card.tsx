@@ -1,9 +1,17 @@
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash } from "@/lib/utils";
 import { Ai } from "@prisma/client";
 import Link from "next/link";
 
-export default function AiCard({ data }: { data: Ai }) {
+export default async function AiCard({ data }: { data: Ai }) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+  const isOwner = data.userId === session.user.id;
+
   const url =
     data.ownDomain ??
     `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
@@ -47,14 +55,21 @@ export default function AiCard({ data }: { data: Ai }) {
         {data.access === "public" ? (
           <Link
             href={`/ai/${data.id}/settings`}
-            className="flex items-center rounded-md bg-blue-100 px-2 py-1 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:bg-opacity-50 dark:text-blue-400 dark:hover:bg-blue-800 dark:hover:bg-opacity-50"
+            className="flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium uppercase text-blue-600 transition-colors hover:bg-blue-200 dark:bg-blue-900 dark:bg-opacity-50 dark:text-blue-400 dark:hover:bg-blue-800 dark:hover:bg-opacity-50"
           >
             <p>public</p>
+          </Link>
+        ) : data.access === "members" ? (
+          <Link
+            href={`/ai/${data.id}${isOwner ? "/settings/team" : ""}`}
+            className="flex items-center rounded-md bg-orange-100 px-2 py-1 text-xs font-medium uppercase text-orange-600 transition-colors hover:bg-orange-200 dark:bg-orange-900 dark:bg-opacity-50 dark:text-orange-400 dark:hover:bg-orange-800 dark:hover:bg-opacity-50"
+          >
+            <p>Team</p>
           </Link>
         ) : (
           <Link
             href={`/ai/${data.id}/settings`}
-            className="flex items-center rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-green-600 transition-colors hover:bg-green-200 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:hover:bg-green-800 dark:hover:bg-opacity-50"
+            className="flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium uppercase text-green-600 transition-colors hover:bg-green-200 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:hover:bg-green-800 dark:hover:bg-opacity-50"
           >
             <p>private</p>
           </Link>

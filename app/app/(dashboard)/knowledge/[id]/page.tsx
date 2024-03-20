@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth";
+import { getMemberRole, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Editor from "@/components/editor";
@@ -12,7 +12,7 @@ export default async function KnowledgePage({
   if (!session) {
     redirect("/login");
   }
-  const data = await prisma.knowledge.findUnique({
+  const knowledge = await prisma.knowledge.findUnique({
     where: {
       id: decodeURIComponent(params.id),
     },
@@ -22,13 +22,24 @@ export default async function KnowledgePage({
           subdomain: true,
           ownDomain: true,
           name: true,
+          userId: true,
+          members: true,
         },
       },
     },
   });
-  if (!data || data.userId !== session.user.id) {
+
+  if (!knowledge || !knowledge.ai) {
     notFound();
   }
+  if (
+    knowledge.ai.userId !== session.user.id &&
+    getMemberRole(knowledge.ai, session.user.email) !== "teacher"
+  ) {
+    return {
+      error: "Not authorized",
+    };
+  }
 
-  return <Editor knowledge={data} />;
+  return <Editor knowledge={knowledge} />;
 }

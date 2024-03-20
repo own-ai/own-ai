@@ -1,18 +1,32 @@
-import prisma from "@/lib/prisma";
+import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
-import { updateAi } from "@/lib/actions";
 import DeleteAiForm from "@/components/form/delete-ai-form";
+import { updateAi } from "@/lib/actions";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 
 export default async function AiSettingsIndex({
   params,
 }: {
   params: { id: string };
 }) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+
   const data = await prisma.ai.findUnique({
     where: {
       id: decodeURIComponent(params.id),
     },
   });
+
+  if (!data || data.userId !== session.user.id) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col space-y-6">
@@ -31,7 +45,7 @@ export default async function AiSettingsIndex({
 
       <Form
         title="Access"
-        description="Who should be able to use the AI? Public AIs can be used by anyone who knows the URL. Private AIs can only be used by your account."
+        description="Who should be able to use the AI? Public AIs can be used by anyone who knows the URL. Private AIs can only be used by your account. For Team AIs, you decide who can use the AI."
         helpText=""
         inputAttrs={{
           name: "access",
@@ -39,6 +53,8 @@ export default async function AiSettingsIndex({
           defaultValue: data?.access!,
         }}
         handleSubmit={updateAi}
+        hasPro={subscriptionPlan.isPro}
+        needsPro={data?.access === "members"}
       />
 
       <Form

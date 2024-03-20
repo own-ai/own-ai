@@ -74,14 +74,14 @@ export default function BillingForm({
           </strong>{" "}
           plan.{" "}
           {subscriptionPlan.isPro ? (
-            "Great choice! You can create unlimited AIs and use your own domains."
+            "Great choice! You can create unlimited AIs, use your own domains and share AIs with your team."
           ) : (
             <>
               Upgrade now to{" "}
               <strong className="inline-block bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
                 PRO
               </strong>{" "}
-              for unlimited AIs and own domains!
+              for unlimited AIs, own domains and shared AIs for your team!
             </>
           )}
         </p>

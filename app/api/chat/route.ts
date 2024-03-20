@@ -30,16 +30,15 @@ export async function POST(req: Request) {
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
   const ai = await getAiData(domain);
 
-  const json = await req.json();
-  const { messages } = json;
-  const userId = (await getSession())?.user.id;
-
-  // Check if the user is authorized to use this AI
-  if (ai?.access !== "public" && (!userId || ai?.userId !== userId)) {
+  if (!ai) {
     return new Response("Unauthorized", {
       status: 401,
     });
   }
+
+  const json = await req.json();
+  const { messages } = json;
+  const userId = (await getSession())?.user.id;
 
   const model = new ChatTogetherAI({
     togetherAIApiKey: process.env.TOGETHER_API_KEY,

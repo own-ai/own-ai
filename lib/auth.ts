@@ -1,8 +1,11 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { Ai } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
 import { sendVerificationRequest } from "./authmail";
+import { type AiMemberRole, isAiMember } from "./types";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -77,7 +80,47 @@ export function getSession() {
   } | null>;
 }
 
-export function withAiAuth(action: any) {
+export function getMemberRole(ai: Pick<Ai, "members">, email: string) {
+  if (!ai || !email) {
+    return undefined;
+  }
+
+  if (Array.isArray(ai.members)) {
+    for (const member of ai.members) {
+      if (isAiMember(member)) {
+        if (member.email === email) {
+          return member.role;
+        }
+      }
+    }
+  }
+}
+
+export async function canUseAi(ai: Ai, user?: { id: string; email: string }) {
+  if (ai.access === "public") {
+    return true;
+  }
+
+  if (user) {
+    if (ai.userId === user.id) {
+      return true;
+    }
+
+    if (ai.access === "members" && getMemberRole(ai, user.email)) {
+      // Check if the PRO subscription is still active for Team AIs
+      const subscriptionPlan = ai.userId
+        ? await getUserSubscriptionPlan(ai.userId)
+        : null;
+      if (subscriptionPlan?.isPro) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+export function withAiAuth(action: any, allowMemberRoles: AiMemberRole[] = []) {
   return async (
     formData: FormData | null,
     aiId: string,
@@ -94,7 +137,13 @@ export function withAiAuth(action: any) {
         id: aiId,
       },
     });
-    if (!ai || ai.userId !== session.user.id) {
+    const isMemberRoleAllowed = (memberRole?: AiMemberRole) =>
+      memberRole && allowMemberRoles.includes(memberRole);
+    if (
+      !ai ||
+      (ai.userId !== session.user.id &&
+        !isMemberRoleAllowed(getMemberRole(ai, session.user.email)))
+    ) {
       return {
         error: "Not authorized",
       };
@@ -124,9 +173,17 @@ export function withKnowledgeAuth(action: any) {
         ai: true,
       },
     });
-    if (!knowledge || knowledge.userId !== session.user.id) {
+    if (!knowledge || !knowledge.ai) {
       return {
         error: "Knowledge not found",
+      };
+    }
+    if (
+      knowledge.ai.userId !== session.user.id &&
+      getMemberRole(knowledge.ai, session.user.email) !== "teacher"
+    ) {
+      return {
+        error: "Not authorized",
       };
     }
 

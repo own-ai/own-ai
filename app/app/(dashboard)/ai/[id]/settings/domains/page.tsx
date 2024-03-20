@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-
+import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions";
 import { getSession } from "@/lib/auth";
@@ -23,6 +22,10 @@ export default async function AiSettingsDomains({
       id: decodeURIComponent(params.id),
     },
   });
+
+  if (!data || data.userId !== session.user.id) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col space-y-6">

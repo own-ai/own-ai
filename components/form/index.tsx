@@ -13,7 +13,9 @@ import DomainConfiguration from "./domain-configuration";
 import Uploader from "./uploader";
 import va from "@vercel/analytics";
 import ConversationStartersConfiguration from "./conversation-starters-configuration";
-import type { ConversationStarter } from "@/lib/types";
+import MembersConfiguration from "./members-configuration";
+import type { AiMember, ConversationStarter } from "@/lib/types";
+import Link from "next/link";
 
 export default function Form({
   title,
@@ -23,6 +25,7 @@ export default function Form({
   handleSubmit,
   needsPro,
   hasPro,
+  contactUs,
 }: {
   title: string;
   description: string;
@@ -34,16 +37,30 @@ export default function Form({
     placeholder?: string;
     maxLength?: number;
     pattern?: string;
+    disabled?: boolean;
   };
   handleSubmit: any;
   needsPro?: boolean;
   hasPro?: boolean;
+  contactUs?: boolean;
 }) {
   const { id } = useParams() as { id?: string };
   const router = useRouter();
   const { update } = useSession();
   const [welcome, setWelcome] = useState(
     inputAttrs.name === "welcome" ? inputAttrs.defaultValue : null,
+  );
+  const [members, setMembers] = useState<AiMember[]>(
+    inputAttrs.name === "members" &&
+      !["null", "[]"].includes(inputAttrs.defaultValue)
+      ? JSON.parse(inputAttrs.defaultValue)
+      : [
+          {
+            key: 0,
+            email: "",
+            role: "user",
+          },
+        ],
   );
   const [starters, setStarters] = useState<ConversationStarter[]>(
     inputAttrs.name === "starters" &&
@@ -57,6 +74,7 @@ export default function Form({
           },
         ],
   );
+  const [needsProState, setNeedsProState] = useState(!!needsPro);
 
   return (
     <form
@@ -72,6 +90,12 @@ export default function Form({
 
         if (inputAttrs.name === "welcome") {
           data.append("welcome", welcome ?? "");
+        }
+        if (inputAttrs.name === "members") {
+          data.append(
+            "members",
+            JSON.stringify(members.filter((m) => m.email)),
+          );
         }
         if (inputAttrs.name === "starters") {
           data.append(
@@ -91,7 +115,7 @@ export default function Form({
               await update();
               router.refresh();
             }
-            toast.success("Successfully updated your AI.");
+            toast.success("Saved successfully");
           }
         });
       }}
@@ -108,31 +132,42 @@ export default function Form({
             name={inputAttrs.name}
           />
         ) : inputAttrs.name === "access" ? (
-          <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
+          <>
             <select
               name="access"
               defaultValue={inputAttrs.defaultValue}
-              className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
+              className="w-full max-w-md rounded-md border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+              onChange={(e) => {
+                setNeedsProState(e.target.value === "members");
+              }}
             >
               <option value="private">Private</option>
-              <option value="members" disabled>
-                Team (coming soon)
-              </option>
+              <option value="members">Team</option>
               <option value="public">Public</option>
             </select>
-          </div>
+            {needsProState && inputAttrs.defaultValue === "members" ? (
+              <div className="text-sm text-stone-500 dark:text-stone-400">
+                Please go to the{" "}
+                <Link
+                  href={`/ai/${id}/settings/team`}
+                  className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+                >
+                  Team tab
+                </Link>{" "}
+                to manage your team members.
+              </div>
+            ) : null}
+          </>
         ) : inputAttrs.name === "model" ? (
-          <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
-            <select
-              name="model"
-              defaultValue={inputAttrs.defaultValue}
-              className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
-            >
-              <option value="mistralai/Mixtral-8x7B-Instruct-v0.1">
-                Mixtral 8x7B Instruct v0.1
-              </option>
-            </select>
-          </div>
+          <select
+            name="model"
+            defaultValue={inputAttrs.defaultValue}
+            className="w-full max-w-md rounded-md border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+          >
+            <option value="mistralai/Mixtral-8x7B-Instruct-v0.1">
+              Mixtral 8x7B Instruct v0.1
+            </option>
+          </select>
         ) : inputAttrs.name === "subdomain" ? (
           <div className="flex w-full max-w-md">
             <input
@@ -178,6 +213,11 @@ export default function Form({
             }}
             disableLocalStorage={true}
           />
+        ) : inputAttrs.name === "members" ? (
+          <MembersConfiguration
+            members={members}
+            onUpdate={(members) => setMembers(members)}
+          />
         ) : inputAttrs.name === "starters" ? (
           <ConversationStartersConfiguration
             starters={starters}
@@ -187,7 +227,10 @@ export default function Form({
           <input
             {...inputAttrs}
             required
-            className="w-full max-w-md rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+            className={cn(
+              "w-full max-w-md rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700",
+              inputAttrs.disabled ? "bg-stone-50 dark:bg-stone-800" : null,
+            )}
           />
         )}
       </div>
@@ -197,7 +240,7 @@ export default function Form({
       <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10">
         <p className="text-sm text-stone-500 dark:text-stone-400">
           {helpText ||
-            (needsPro ? (
+            (needsProState && !hasPro ? (
               <>
                 Available in{" "}
                 <strong className="inline-block bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
@@ -206,7 +249,7 @@ export default function Form({
               </>
             ) : null)}
         </p>
-        {needsPro && !hasPro ? (
+        {needsProState && !hasPro ? (
           <button
             className="flex h-8 w-32 items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800 sm:h-10"
             onClick={(event) => {
@@ -215,6 +258,16 @@ export default function Form({
             }}
           >
             <p>Upgrade to PRO</p>
+          </button>
+        ) : contactUs ? (
+          <button
+            className="flex h-8 w-32 items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800 sm:h-10"
+            onClick={(event) => {
+              event.preventDefault();
+              window.location.href = "mailto:info@ownai.com";
+            }}
+          >
+            <p>Contact us</p>
           </button>
         ) : (
           <FormButton />

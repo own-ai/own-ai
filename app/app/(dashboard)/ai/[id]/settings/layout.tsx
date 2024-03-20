@@ -25,7 +25,9 @@ export default async function AiSettingsLayout({
     notFound();
   }
 
-  const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const url =
+    data.ownDomain ??
+    `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   return (
     <>
@@ -46,7 +48,7 @@ export default async function AiSettingsLayout({
           {url} ↗
         </a>
       </div>
-      <AiSettingsNav />
+      <AiSettingsNav id={data.id} isTeamAi={data.access === "members"} />
       {children}
     </>
   );

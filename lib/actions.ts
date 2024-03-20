@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Knowledge, Ai, Access } from "@prisma/client";
 import { revalidateTag } from "next/cache";
-import { withKnowledgeAuth, withAiAuth } from "./auth";
+import { withKnowledgeAuth, withAiAuth, getMemberRole } from "./auth";
 import { getSession } from "@/lib/auth";
 import {
   addDomainToVercel,
@@ -207,7 +207,9 @@ export const updateAi = withAiAuth(
             id: ai.id,
           },
           data: {
-            [key]: key === "starters" ? JSON.parse(value) : value,
+            [key]: ["members", "starters"].includes(key)
+              ? JSON.parse(value)
+              : value,
           },
         });
       }
@@ -250,7 +252,7 @@ export const deleteAi = withAiAuth(async (_: FormData, ai: Ai) => {
   }
 });
 
-export const getAiFromKnowledgeId = async (knowledgeId: string) => {
+export const getAiIdFromKnowledgeId = async (knowledgeId: string) => {
   const knowledge = await prisma.knowledge.findUnique({
     where: {
       id: knowledgeId,
@@ -262,27 +264,47 @@ export const getAiFromKnowledgeId = async (knowledgeId: string) => {
   return knowledge?.aiId;
 };
 
-export const createKnowledge = withAiAuth(async (_: FormData, ai: Ai) => {
+export const getIsUserAiOwner = async (aiId: string) => {
   const session = await getSession();
-  if (!session?.user.id) {
-    return {
-      error: "Not authenticated",
-    };
+  if (!session) {
+    return false;
   }
-  const response = await prisma.knowledge.create({
-    data: {
-      aiId: ai.id,
-      userId: session.user.id,
+
+  const ai = await prisma.ai.findUnique({
+    where: {
+      id: aiId,
+    },
+    select: {
+      userId: true,
     },
   });
+  return ai?.userId === session.user.id;
+};
 
-  revalidateTag(
-    `${ai.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-knowledges`,
-  );
-  ai.ownDomain && revalidateTag(`${ai.ownDomain}-knowledges`);
+export const createKnowledge = withAiAuth(
+  async (_: FormData, ai: Ai) => {
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+    const response = await prisma.knowledge.create({
+      data: {
+        aiId: ai.id,
+        userId: session.user.id,
+      },
+    });
 
-  return response;
-});
+    revalidateTag(
+      `${ai.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-knowledges`,
+    );
+    ai.ownDomain && revalidateTag(`${ai.ownDomain}-knowledges`);
+
+    return response;
+  },
+  ["teacher"],
+);
 
 export const updateKnowledge = async (data: Knowledge) => {
   const session = await getSession();
@@ -300,9 +322,17 @@ export const updateKnowledge = async (data: Knowledge) => {
       ai: true,
     },
   });
-  if (!knowledge || knowledge.userId !== session.user.id) {
+  if (!knowledge || !knowledge.ai) {
     return {
       error: "Knowledge not found",
+    };
+  }
+  if (
+    knowledge.ai.userId !== session.user.id &&
+    getMemberRole(knowledge.ai, session.user.email) !== "teacher"
+  ) {
+    return {
+      error: "Not authorized",
     };
   }
 
@@ -396,6 +426,14 @@ export const editUser = async (
       error: "Not authenticated",
     };
   }
+
+  const allowedKeys = ["name"];
+  if (!allowedKeys.includes(key)) {
+    return {
+      error: `Please contact us to change ${key}.`,
+    };
+  }
+
   const value = formData.get(key) as string;
 
   try {

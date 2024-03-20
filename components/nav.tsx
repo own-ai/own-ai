@@ -16,7 +16,7 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getAiFromKnowledgeId } from "@/lib/actions";
+import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions";
 import Image from "next/image";
 
 const externalLinks: {
@@ -27,21 +27,28 @@ const externalLinks: {
 
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
+  const firstSegment = segments[0];
   const { id } = useParams() as { id?: string };
 
   const [aiId, setAiId] = useState<string | null>();
+  const [isAiOwner, setIsAiOwner] = useState<boolean | null>();
 
   useEffect(() => {
-    if (segments[0] === "knowledge" && id) {
-      getAiFromKnowledgeId(id).then((id) => {
-        setAiId(id);
+    if (firstSegment === "knowledge" && id) {
+      getAiIdFromKnowledgeId(id).then((aiId) => {
+        setAiId(aiId);
       });
     }
-  }, [segments, id]);
+    if (firstSegment === "ai" && id) {
+      getIsUserAiOwner(id).then((isOwner) => {
+        setIsAiOwner(isOwner);
+      });
+    }
+  }, [firstSegment, id]);
 
   const tabs = useMemo(() => {
     if (segments[0] === "ai" && id) {
-      return [
+      const items = [
         {
           name: "Back to your AIs",
           href: "/ais",
@@ -53,13 +60,16 @@ export default function Nav({ children }: { children: ReactNode }) {
           isActive: segments.length === 2,
           icon: <Newspaper width={18} />,
         },
-        {
+      ];
+      if (isAiOwner) {
+        items.push({
           name: "AI Settings",
           href: `/ai/${id}/settings`,
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
-        },
-      ];
+        });
+      }
+      return items;
     } else if (segments[0] === "knowledge" && id) {
       return [
         {
@@ -101,7 +111,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id, aiId]);
+  }, [segments, id, aiId, isAiOwner]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 

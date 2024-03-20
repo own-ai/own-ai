@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { canUseAi, getSession } from "@/lib/auth";
 import { Ai, User } from "@prisma/client";
 import { PublicAiData } from "./types";
 
@@ -31,10 +31,7 @@ export async function getAiData(
 ): Promise<(Ai & { user: User | null }) | null> {
   const ai = await fetchAiData(domain);
 
-  if (
-    ai?.access === "public" ||
-    ai?.user?.id === (await getSession())?.user.id
-  ) {
+  if (ai && (await canUseAi(ai, (await getSession())?.user))) {
     return ai;
   }
 
