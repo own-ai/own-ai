@@ -29,6 +29,7 @@
     "@vercel/kv": "^1.0.0",
     "@vercel/og": "^0.6.2",
     "@vercel/postgres": "^0.5.1",
+    "@vercel/speed-insights": "^1.0.10",
     "ai": "^2.2.22",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
