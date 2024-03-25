@@ -54,9 +54,18 @@ async function UserOrLogin({ ai }: { ai: PublicAiData | null }) {
     );
   }
 
+  let loginUrl = "/login";
+
+  // For demo, the Login link should lead to App login – users try to sign up to ownAI here
+  if (ai?.subdomain === "demo") {
+    loginUrl = process.env.NEXT_PUBLIC_VERCEL_ENV
+      ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/login`
+      : `http://app.localhost:3000/login`;
+  }
+
   return (
     <Button variant="link" asChild className="-ml-2">
-      <Link href="/login">Login</Link>
+      <Link href={loginUrl}>Login</Link>
     </Button>
   );
 }
