@@ -24,6 +24,25 @@ export default function SignInPage() {
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
 
+  const submit = async () => {
+    if (!email || loading) {
+      return;
+    }
+
+    setLoading(true);
+    const response = await signIn("email", {
+      email,
+      redirect: false,
+      callbackUrl: "/",
+    });
+    setLoading(false);
+    if (!response?.ok) {
+      toast.error(`Error: ${response?.error}`);
+    } else {
+      setSubmitted(true);
+    }
+  };
+
   return (
     <div className="mx-5 my-10 border border-stone-200 bg-background py-10 text-foreground dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
       {image ? (
@@ -31,7 +50,7 @@ export default function SignInPage() {
           alt={title ?? "Logo"}
           width={240}
           height={160}
-          className="relative mx-auto w-60 border dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
+          className="relative mx-auto w-60 dark:scale-110 dark:rounded-full"
           src={image}
         />
       ) : null}
@@ -59,6 +78,11 @@ export default function SignInPage() {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                submit();
+              }
+            }}
             required
             className="w-full rounded-md border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
           />
@@ -69,20 +93,7 @@ export default function SignInPage() {
           >
             <button
               disabled={!email || loading}
-              onClick={async () => {
-                setLoading(true);
-                const response = await signIn("email", {
-                  email,
-                  redirect: false,
-                  callbackUrl: "/",
-                });
-                setLoading(false);
-                if (!response?.ok) {
-                  toast.error(`Error: ${response?.error}`);
-                } else {
-                  setSubmitted(true);
-                }
-              }}
+              onClick={submit}
               className={`${
                 !email || loading
                   ? "cursor-not-allowed bg-stone-50 dark:bg-stone-800"
