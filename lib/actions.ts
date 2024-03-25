@@ -350,9 +350,7 @@ export const updateKnowledge = async (data: Knowledge) => {
       };
     }
 
-    const document = [data.title, data.description, data.content]
-      .filter((s) => !!s)
-      .join("\n");
+    const document = [data.title, data.content].filter((s) => !!s).join("\n");
     embeddings = document ? await generateEmbeddings(document) : null;
   }
 
@@ -363,7 +361,6 @@ export const updateKnowledge = async (data: Knowledge) => {
       },
       data: {
         title: data.title,
-        description: data.description,
         content: data.content,
         learned: data.learned,
       },

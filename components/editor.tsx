@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import { Knowledge } from "@prisma/client";
 import { updateKnowledge } from "@/lib/actions";
 import { Editor as NovelEditor } from "novel";
-import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
 import { toast } from "sonner";
@@ -29,11 +28,7 @@ export default function Editor({ knowledge }: { knowledge: KnowledgeWithAi }) {
     `${data.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   const saveChanges = useCallback(() => {
-    if (
-      data.title === knowledge.title &&
-      data.description === knowledge.description &&
-      data.content === knowledge.content
-    ) {
+    if (data.title === knowledge.title && data.content === knowledge.content) {
       return;
     }
     startTransitionSaving(async () => {
@@ -60,39 +55,41 @@ export default function Editor({ knowledge }: { knowledge: KnowledgeWithAi }) {
 
   return (
     <>
-      <Alert variant={data.learned ? "default" : "destructive"}>
-        <Bot className="h-4 w-4" />
-        <AlertTitle>
-          {data.learned
-            ? `${data.ai?.name} learned this knowledge`
-            : "Knowledge not learned yet"}
-        </AlertTitle>
-        <AlertDescription>
-          {data.learned ? (
-            <p>
-              I have learned this knowledge. You can talk with me about it by
-              visiting my URL{" "}
-              <a
-                href={
-                  process.env.NEXT_PUBLIC_VERCEL_ENV
-                    ? `https://${aiUrl}`
-                    : `http://${data.ai?.subdomain}.localhost:3000`
-                }
-                target="_blank"
-                rel="noreferrer"
-                className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
-              >
-                {aiUrl} ↗
-              </a>
-            </p>
-          ) : (
-            <p>
-              Please click the <strong>Learn</strong> button to teach this
-              content to your AI.
-            </p>
-          )}
-        </AlertDescription>
-      </Alert>
+      <div className="max-w-screen-lg px-4 sm:px-0">
+        <Alert variant={data.learned ? "default" : "destructive"}>
+          <Bot className="h-4 w-4" />
+          <AlertTitle>
+            {data.learned
+              ? `${data.ai?.name} learned this knowledge`
+              : "Knowledge not learned yet"}
+          </AlertTitle>
+          <AlertDescription>
+            {data.learned ? (
+              <p>
+                I have learned this knowledge. You can talk with me about it by
+                visiting my URL{" "}
+                <a
+                  href={
+                    process.env.NEXT_PUBLIC_VERCEL_ENV
+                      ? `https://${aiUrl}`
+                      : `http://${data.ai?.subdomain}.localhost:3000`
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                  className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+                >
+                  {aiUrl} ↗
+                </a>
+              </p>
+            ) : (
+              <p>
+                Please click the <strong>Learn</strong> button to teach this
+                content to your AI.
+              </p>
+            )}
+          </AlertDescription>
+        </Alert>
+      </div>
       <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
         <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
           <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
@@ -131,7 +128,7 @@ export default function Editor({ knowledge }: { knowledge: KnowledgeWithAi }) {
         <div className="mb-5 flex flex-col space-y-3 border-b border-stone-200 pb-5 dark:border-stone-700">
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Knowledge Title"
             defaultValue={knowledge?.title || ""}
             autoFocus
             onChange={(e) => {
@@ -140,18 +137,9 @@ export default function Editor({ knowledge }: { knowledge: KnowledgeWithAi }) {
             }}
             className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
           />
-          <TextareaAutosize
-            placeholder="Description"
-            defaultValue={knowledge?.description || ""}
-            onChange={(e) => {
-              setData({ ...data, description: e.target.value });
-              saveChangesDebounced();
-            }}
-            className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
-          />
         </div>
         <NovelEditor
-          className="relative block"
+          className="knowledge-editor relative block"
           defaultValue={knowledge?.content || ""}
           onUpdate={(editor) => {
             setData((prev) => ({

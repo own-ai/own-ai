@@ -103,6 +103,9 @@
   pointer-events: none;
   height: 0;
 }
+.knowledge-editor .ProseMirror .is-editor-empty:first-child::before {
+  content: "Please write down knowledge you want to teach your AI here...";
+}
 
 /* Custom image styles */
 

@@ -22,7 +22,7 @@ export default function KnowledgeCard({
             {data.title}
           </h3>
           <p className="mt-2 line-clamp-2 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
-            {data.description ?? data.content}
+            {data.content}
           </p>
         </div>
       </Link>
