@@ -1,7 +1,4 @@
 import { Toaster } from "react-hot-toast";
-import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
-import { cn } from "@/lib/utils";
 import { TailwindIndicator } from "@/components/chat/tailwind-indicator";
 import { Providers } from "@/components/chat/providers";
 import { Header } from "@/components/chat/header";
@@ -47,35 +44,33 @@ export const viewport = {
   ],
 };
 
-interface RootLayoutProps {
+interface DomainLayoutProps {
   params: { domain: string };
   children: React.ReactNode;
 }
 
-export default async function RootLayout({
+export default async function DomainLayout({
   params,
   children,
-}: RootLayoutProps) {
+}: DomainLayoutProps) {
   const domain = decodeURIComponent(params.domain);
   const ai = await getPublicAiData(domain);
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn(cal.variable, inter.variable)}>
-        <Toaster />
-        <Providers
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="flex min-h-screen flex-col">
-            <Header ai={ai} />
-            <main className="flex flex-1 flex-col bg-muted/50">{children}</main>
-          </div>
-          <TailwindIndicator />
-        </Providers>
-      </body>
-    </html>
+    <>
+      <Toaster />
+      <Providers
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <div className="flex min-h-screen flex-col">
+          <Header ai={ai} />
+          <main className="flex flex-1 flex-col bg-muted/50">{children}</main>
+        </div>
+        <TailwindIndicator />
+      </Providers>
+    </>
   );
 }

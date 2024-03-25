@@ -1,29 +1,13 @@
 import "@/styles/globals.css";
 import { cal, inter } from "@/styles/fonts";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Providers } from "./providers";
-import { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import type { Viewport } from "next";
 
-const title = "ownAI – Have your own AI";
-const description = "Have your own AI.";
-const image = "/og-image.png";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  icons: ["/favicon.ico"],
-  openGraph: {
-    title,
-    description,
-    images: [image],
-  },
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_VERCEL_ENV
-      ? `https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-      : "http://localhost:3000",
-  ),
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -33,13 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(cal.variable, inter.variable)}>
-        <Providers>
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </Providers>
-      </body>
+      <body className={cn(cal.variable, inter.variable)}>{children}</body>
     </html>
   );
 }
