@@ -53,7 +53,8 @@ export const createAi = async (formData: FormData) => {
 
   if (!isValidSubdomain(subdomain)) {
     return {
-      error: "This subdomain is already taken.",
+      error:
+        "Invalid domain: Only lowercase letters, numbers and the hyphen are allowed.",
     };
   }
 
@@ -165,7 +166,8 @@ export const updateAi = withAiAuth(
       } else if (key === "subdomain") {
         if (!isValidSubdomain(value)) {
           return {
-            error: "This subdomain is already taken.",
+            error:
+              "Invalid subdomain: Only lowercase letters, numbers and the hyphen are allowed.",
           };
         }
         response = await prisma.ai.update({

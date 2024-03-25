@@ -11,6 +11,7 @@ import { useModal } from "./provider";
 import va from "@vercel/analytics";
 import { useEffect, useState } from "react";
 import { UserSubscriptionPlan } from "@/lib/types";
+import { slugify } from "@/lib/domains";
 
 export default function CreateAiModal({
   subscriptionPlan,
@@ -26,16 +27,13 @@ export default function CreateAiModal({
     name: "",
     subdomain: "",
     access: "private",
-    instructions: "You are …",
+    instructions: "",
   });
 
   useEffect(() => {
     setData((prev) => ({
       ...prev,
-      subdomain: prev.name
-        .toLowerCase()
-        .trim()
-        .replace(/[\W_]+/g, "-"),
+      subdomain: slugify(prev.name),
     }));
   }, [data.name]);
 
@@ -117,7 +115,6 @@ export default function CreateAiModal({
                     setData({ ...data, subdomain: e.target.value })
                   }
                   autoCapitalize="off"
-                  pattern="[a-zA-Z0-9\-]+" // only allow lowercase letters, numbers, and dashes
                   maxLength={32}
                   required
                   className="w-full rounded-l-lg border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
@@ -171,6 +168,7 @@ export default function CreateAiModal({
               <textarea
                 name="instructions"
                 value={data.instructions}
+                placeholder="You are …"
                 onChange={(e) =>
                   setData({ ...data, instructions: e.target.value })
                 }

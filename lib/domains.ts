@@ -146,7 +146,7 @@ export const isValidSubdomain = (subdomain: string) => {
     return false;
   }
 
-  if (!/^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/.test(subdomain)) {
+  if (!/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/.test(subdomain)) {
     return false;
   }
 
@@ -173,5 +173,18 @@ export const isValidSubdomain = (subdomain: string) => {
     "pay",
     "bounce",
   ];
-  return !forbiddenSubdomains.includes(subdomain.toLowerCase());
+  return !forbiddenSubdomains.includes(subdomain);
+};
+
+export const slugify = (text: string) => {
+  return text
+    .normalize("NFKD") // normalize() using NFKD method returns the Unicode Normalization Form of a given string
+    .replace(/[\u0300-\u036f]/g, "") // Remove the accents which got split from base characters using normalize
+    .toLowerCase() // Convert the string to lowercase letters
+    .trim() // Remove whitespace from both sides of a string
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+    .replace(/\_/g, "-") // Replace _ with -
+    .replace(/\-\-+/g, "-") // Replace multiple - with single -
+    .replace(/\-$/g, ""); // Remove trailing -
 };
