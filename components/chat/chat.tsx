@@ -3,7 +3,7 @@
 import { useChat, type Message } from "ai/react";
 import { MDXRemoteProps } from "next-mdx-remote";
 import { toast } from "react-hot-toast";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { ChatList } from "@/components/chat/chat-list";
@@ -26,6 +26,7 @@ export function Chat({
   starters,
 }: ChatProps) {
   const path = usePathname();
+  const router = useRouter();
 
   const {
     messages,
@@ -48,8 +49,8 @@ export function Chat({
       }
     },
     onFinish() {
-      if (!path.includes("chat")) {
-        window.history.pushState({}, "", `/chat/${id}`);
+      if (id && !path.includes("chat")) {
+        router.push(`/chat/${id}`);
       }
     },
   });

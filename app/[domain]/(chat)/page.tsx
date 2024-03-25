@@ -13,11 +13,12 @@ export default async function IndexPage({
 }: {
   params: { domain: string };
 }) {
-  const id = nanoid();
+  const hasSession = !!(await getSession());
+  const id = hasSession ? nanoid() : undefined;
   const domain = decodeURIComponent(params.domain);
   const ai = await getAiData(domain);
   if (!ai) {
-    if (await getSession()) {
+    if (hasSession) {
       return (
         <div className="m-4">
           <Alert variant="destructive">

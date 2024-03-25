@@ -1,8 +1,12 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { clearChats, getChats } from "@/app/[domain]/actions";
 import { ClearHistory } from "@/components/chat/clear-history";
 import { SidebarItems } from "@/components/chat/sidebar-items";
 import { ThemeToggle } from "@/components/chat/theme-toggle";
-import { cache } from "react";
+import { Chat } from "@/lib/types";
 
 interface SidebarListProps {
   userId?: string;
@@ -10,12 +14,13 @@ interface SidebarListProps {
   children?: React.ReactNode;
 }
 
-const loadChats = cache(async (userId?: string, aiId?: string) => {
-  return await getChats(userId, aiId);
-});
+export function SidebarList({ userId, aiId }: SidebarListProps) {
+  const pathname = usePathname();
+  const [chats, setChats] = useState<Chat[]>([]);
 
-export async function SidebarList({ userId, aiId }: SidebarListProps) {
-  const chats = await loadChats(userId, aiId);
+  useEffect(() => {
+    getChats(userId, aiId).then(setChats);
+  }, [pathname, aiId, userId]);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -32,11 +37,13 @@ export async function SidebarList({ userId, aiId }: SidebarListProps) {
       </div>
       <div className="flex items-center justify-between p-4">
         <ThemeToggle />
-        <ClearHistory
-          clearChats={clearChats}
-          isEnabled={chats?.length > 0}
-          aiId={aiId}
-        />
+        {chats?.length > 3 ? (
+          <ClearHistory
+            clearChats={clearChats}
+            isEnabled={chats?.length > 0}
+            aiId={aiId}
+          />
+        ) : null}
       </div>
     </div>
   );
