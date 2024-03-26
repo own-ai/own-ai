@@ -378,13 +378,13 @@ export const updateKnowledge = async (data: Knowledge) => {
       `${knowledge.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-knowledges`,
     );
     revalidateTag(
-      `${knowledge.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${knowledge.slug}`,
+      `${knowledge.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${data.id}`,
     );
 
     // if the AI has an own domain, we need to revalidate those tags too
     knowledge.ai?.ownDomain &&
       (revalidateTag(`${knowledge.ai?.ownDomain}-knowledges`),
-      revalidateTag(`${knowledge.ai?.ownDomain}-${knowledge.slug}`));
+      revalidateTag(`${knowledge.ai?.ownDomain}-${data.id}`));
 
     return response;
   } catch (error: any) {

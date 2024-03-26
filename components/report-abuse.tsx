@@ -11,8 +11,8 @@ import { toast } from "sonner";
 
 export default function ReportAbuse() {
   const [open, setOpen] = useState(false);
-  const { domain, slug } = useParams() as { domain: string; slug?: string };
-  const url = slug ? `https://${domain}/${slug}` : `https://${domain}`;
+  const { domain } = useParams() as { domain: string };
+  const url = `https://${domain}`;
 
   return (
     <div className="fixed bottom-5 right-5">
