@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { getSession } from "@/lib/auth";
-import { getChat } from "@/app/[domain]/actions";
+import { getChat } from "@/app/domain/[domain]/actions";
 import { Chat } from "@/components/chat/chat";
 
 export interface ChatPageProps {

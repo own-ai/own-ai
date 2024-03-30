@@ -3,6 +3,7 @@ import { TailwindIndicator } from "@/components/chat/tailwind-indicator";
 import { Providers } from "@/components/chat/providers";
 import { Header } from "@/components/chat/header";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getPublicAiData } from "@/lib/fetchers";
 
 export async function generateMetadata({
@@ -55,6 +56,10 @@ export default async function DomainLayout({
 }: DomainLayoutProps) {
   const domain = decodeURIComponent(params.domain);
   const ai = await getPublicAiData(domain);
+
+  if (!ai) {
+    notFound();
+  }
 
   return (
     <>

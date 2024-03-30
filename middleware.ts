@@ -60,6 +60,6 @@ export default async function middleware(req: NextRequest) {
     );
   }
 
-  // rewrite everything else to /[domain]/ dynamic route
-  return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  // rewrite everything else to /domain/[domain]/ dynamic route
+  return NextResponse.rewrite(new URL(`/domain/${hostname}${path}`, req.url));
 }

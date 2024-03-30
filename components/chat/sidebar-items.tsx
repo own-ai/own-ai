@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 
 import { Chat } from "@/lib/types";
-import { removeChat, shareChat } from "@/app/[domain]/actions";
+import { removeChat, shareChat } from "@/app/domain/[domain]/actions";
 import { SidebarActions } from "@/components/chat/sidebar-actions";
 import { SidebarItem } from "@/components/chat/sidebar-item";
 

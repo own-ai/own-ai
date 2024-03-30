@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { toDateString } from "@/lib/utils";
-import { getSharedChat } from "@/app/[domain]/actions";
+import { getSharedChat } from "@/app/domain/[domain]/actions";
 import { ChatList } from "@/components/chat/chat-list";
 import { FooterText } from "@/components/chat/footer";
 

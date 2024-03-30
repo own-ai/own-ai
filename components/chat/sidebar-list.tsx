@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clearChats, getChats } from "@/app/[domain]/actions";
+import { clearChats, getChats } from "@/app/domain/[domain]/actions";
 import { ClearHistory } from "@/components/chat/clear-history";
 import { SidebarItems } from "@/components/chat/sidebar-items";
 import { ThemeToggle } from "@/components/chat/theme-toggle";
