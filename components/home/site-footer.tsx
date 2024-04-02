@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   return (
@@ -34,6 +35,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
             </a>
           </p>
         </div>
+        <ThemeToggle />
       </div>
     </footer>
   );

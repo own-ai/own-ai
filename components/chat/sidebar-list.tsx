@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { clearChats, getChats } from "@/app/domain/[domain]/actions";
 import { ClearHistory } from "@/components/chat/clear-history";
 import { SidebarItems } from "@/components/chat/sidebar-items";
-import { ThemeToggle } from "@/components/chat/theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Chat } from "@/lib/types";
 
 interface SidebarListProps {

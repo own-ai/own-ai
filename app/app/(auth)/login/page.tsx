@@ -41,7 +41,7 @@ export default function LoginPage() {
         alt="ownAI"
         width={64}
         height={64}
-        className="relative mx-auto w-auto dark:scale-110 dark:rounded-full"
+        className="relative mx-auto w-auto dark:invert"
         src="/logo.png"
       />
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">

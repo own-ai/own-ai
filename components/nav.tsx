@@ -151,7 +151,7 @@ export default function Nav({ children }: { children: ReactNode }) {
                 width={48}
                 height={48}
                 alt="Logo"
-                className="dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
+                className="dark:invert"
               />
             </Link>
           </div>

@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <section className="container prose py-8 md:max-w-[64rem] md:py-12 lg:py-24">
+    <section className="container prose py-8 dark:prose-invert md:max-w-[64rem] md:py-12 lg:py-24">
       <h1 className="font-cal">Privacy Policy</h1>
       <h2 className="font-cal">1. Introduction</h2>
       <p>
