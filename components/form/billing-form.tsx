@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
+import va from "@vercel/analytics";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { UserSubscriptionPlan } from "@/lib/types";
@@ -23,6 +24,9 @@ export default function BillingForm({
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setIsLoading(true);
+    va.track(
+      subscriptionPlan.isPro ? "Opened Manage Subscription" : "Opened Checkout",
+    );
 
     // Get a Stripe session URL.
     const response = await fetch("/api/subscription");
