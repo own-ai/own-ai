@@ -143,3 +143,18 @@ export async function shareChat(id: string) {
 
   return payload;
 }
+
+export async function saveChat(chat: Chat, aiId: string) {
+  const session = await getSession();
+  if (!session?.user?.id || !aiId) {
+    return;
+  }
+
+  const pipeline = kv.pipeline();
+  pipeline.hmset(`chat:${chat.id}`, chat);
+  pipeline.zadd(`user:${session.user.id}:ai:${aiId}`, {
+    score: Date.now(),
+    member: `chat:${chat.id}`,
+  });
+  await pipeline.exec();
+}

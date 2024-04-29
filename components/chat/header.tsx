@@ -24,7 +24,7 @@ async function SidebarAndTitle({
           <ChatHistory userId={session.user.id} aiId={aiId} />
         </SidebarMobile>
         <SidebarToggle />
-        <Link href="/" className="ms-1 font-semibold">
+        <Link href="/new" className="ms-1 font-semibold">
           {title}
         </Link>
       </>
@@ -32,7 +32,7 @@ async function SidebarAndTitle({
   }
 
   return (
-    <Link href="/" className="font-semibold">
+    <Link href="/new" className="font-semibold">
       {title}
     </Link>
   );

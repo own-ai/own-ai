@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { deleteAi } from "@/lib/actions";
+import { deleteAi } from "@/lib/actions/app";
 import va from "@vercel/analytics";
 
 export default function DeleteAiForm({ aiName }: { aiName: string }) {

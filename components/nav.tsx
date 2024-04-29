@@ -16,7 +16,7 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions";
+import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions/app";
 import Image from "next/image";
 
 const externalLinks: {

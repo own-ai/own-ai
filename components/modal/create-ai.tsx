@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { createAi } from "@/lib/actions";
+import { createAi } from "@/lib/actions/app";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";

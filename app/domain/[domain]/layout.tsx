@@ -1,4 +1,4 @@
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "@/components/ui/sonner";
 import { TailwindIndicator } from "@/components/chat/tailwind-indicator";
 import { Providers } from "@/components/chat/providers";
 import { Header } from "@/components/chat/header";
@@ -63,7 +63,7 @@ export default async function DomainLayout({
 
   return (
     <>
-      <Toaster />
+      <Toaster position="top-center" />
       <Providers
         attribute="class"
         defaultTheme="system"

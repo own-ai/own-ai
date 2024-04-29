@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { deleteKnowledge } from "@/lib/actions";
+import { deleteKnowledge } from "@/lib/actions/app";
 import va from "@vercel/analytics";
 
 export default function DeleteKnowledgeForm({ id }: { id: string }) {

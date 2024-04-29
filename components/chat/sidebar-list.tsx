@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clearChats, getChats } from "@/app/domain/[domain]/actions";
+import { clearChats, getChats } from "@/lib/actions/chat";
 import { ClearHistory } from "@/components/chat/clear-history";
 import { SidebarItems } from "@/components/chat/sidebar-items";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -23,7 +23,7 @@ export function SidebarList({ userId, aiId }: SidebarListProps) {
   }, [pathname, aiId, userId]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col overflow-auto">
       <div className="flex-1 overflow-auto">
         {chats?.length ? (
           <div className="space-y-2 px-2">

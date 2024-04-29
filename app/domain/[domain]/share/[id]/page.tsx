@@ -1,10 +1,15 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { toDateString } from "@/lib/utils";
-import { getSharedChat } from "@/app/domain/[domain]/actions";
+import { formatDate } from "@/lib/utils";
+import { getSharedChat } from "@/lib/actions/chat";
 import { ChatList } from "@/components/chat/chat-list";
 import { FooterText } from "@/components/chat/footer";
+import { AI, UIState, getUIStateFromAIState } from "@/lib/actions/ai";
+
+// The edge runtime needs next-auth 5
+// export const runtime = "edge";
+// export const preferredRegion = "home";
 
 interface SharePageProps {
   params: {
@@ -29,20 +34,24 @@ export default async function SharePage({ params }: SharePageProps) {
     notFound();
   }
 
+  const uiState: UIState = getUIStateFromAIState(chat);
+
   return (
     <>
       <div className="flex-1 space-y-6">
         <div className="border-b bg-background px-4 py-6 md:px-6 md:py-8">
-          <div className="mx-auto max-w-2xl md:px-6">
+          <div className="mx-auto max-w-2xl">
             <div className="space-y-1 md:-mx-8">
               <h1 className="text-2xl font-bold">{chat.title}</h1>
               <div className="text-sm text-muted-foreground">
-                {toDateString(chat.createdAt)} · {chat.messages.length} messages
+                {formatDate(chat.createdAt)} · {chat.messages.length} messages
               </div>
             </div>
           </div>
         </div>
-        <ChatList messages={chat.messages} />
+        <AI>
+          <ChatList messages={uiState} isShared={true} />
+        </AI>
       </div>
       <FooterText className="py-8" />
     </>

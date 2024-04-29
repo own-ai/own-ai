@@ -6,7 +6,7 @@ import va from "@vercel/analytics";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { UserSubscriptionPlan } from "@/lib/types";
-import { cn, toDateString } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 interface BillingFormProps extends React.HTMLAttributes<HTMLFormElement> {
   subscriptionPlan: UserSubscriptionPlan & {
@@ -96,7 +96,7 @@ export default function BillingForm({
             {subscriptionPlan.isCanceled
               ? "Your plan will be canceled on "
               : "Your plan renews on "}
-            {toDateString(subscriptionPlan.stripeCurrentPeriodEnd)}.
+            {formatDate(subscriptionPlan.stripeCurrentPeriodEnd)}.
           </p>
         ) : (
           <p></p>

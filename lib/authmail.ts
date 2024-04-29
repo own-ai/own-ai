@@ -1,5 +1,5 @@
 import { createTransport } from "nodemailer";
-import type { Theme } from "next-auth/core/types";
+import type { Theme } from "next-auth";
 import type { SendVerificationRequestParams } from "next-auth/providers/email";
 import { headers } from "next/headers";
 

@@ -5,7 +5,7 @@ import { Ai } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
 import { sendVerificationRequest } from "./authmail";
-import { type AiMemberRole, isAiMember } from "./types";
+import { type AiMemberRole, isAiMember, Session } from "./types";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -69,15 +69,7 @@ export const authOptions: NextAuthOptions = {
 };
 
 export function getSession() {
-  return getServerSession(authOptions) as Promise<{
-    user: {
-      id: string;
-      name: string;
-      username: string;
-      email: string;
-      image: string;
-    };
-  } | null>;
+  return getServerSession<NextAuthOptions, Session>(authOptions);
 }
 
 export function getMemberRole(ai: Pick<Ai, "members">, email: string) {

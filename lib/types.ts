@@ -1,5 +1,15 @@
-import { type Message } from "ai";
+import { Message } from "ai";
 import { Ai, User } from "@prisma/client";
+
+export interface Session {
+  user: {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    image: string;
+  };
+}
 
 export interface Chat extends Record<string, any> {
   id: string;

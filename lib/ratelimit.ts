@@ -11,7 +11,7 @@ export async function getRatelimitResponse(
   ) {
     const ratelimit = new Ratelimit({
       redis: kv,
-      limiter: Ratelimit.slidingWindow(500, "1 d"),
+      limiter: Ratelimit.slidingWindow(60, "10m"),
     });
 
     const { success, limit, reset, remaining } = await ratelimit.limit(
@@ -19,14 +19,17 @@ export async function getRatelimitResponse(
     );
 
     if (!success) {
-      return new Response("You have reached your request limit for the day.", {
-        status: 429,
-        headers: {
-          "X-RateLimit-Limit": limit.toString(),
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": reset.toString(),
+      return new Response(
+        "You have sent many requests in a short time. Please wait a while or contact us to get a higher limit.",
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
         },
-      });
+      );
     }
   }
   return null;

@@ -4,7 +4,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { Editor as NovelEditor } from "novel";
+import Editor from "@/components/editor";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -205,13 +205,14 @@ export default function Form({
             className="w-full rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
           />
         ) : inputAttrs.name === "welcome" ? (
-          <NovelEditor
-            className="relative block w-full rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-            defaultValue={inputAttrs.defaultValue || ""}
-            onUpdate={(editor) => {
-              setWelcome(editor?.storage.markdown.getMarkdown());
+          <Editor
+            className="relative block w-full rounded-md border border-stone-300 p-6 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+            initialContent={inputAttrs.defaultValue || ""}
+            onUpdate={(markdown) => {
+              setWelcome(markdown);
             }}
-            disableLocalStorage={true}
+            emptyEditorPlaceholder="Please write a friendly welcome message here"
+            emptyLinePlaceholder="Press / for formatting options"
           />
         ) : inputAttrs.name === "members" ? (
           <MembersConfiguration

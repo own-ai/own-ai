@@ -1,86 +1,80 @@
 "use client";
 
-import { useChat, type Message } from "ai/react";
 import { MDXRemoteProps } from "next-mdx-remote";
-import { toast } from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useUIState, useAIState } from "ai/rsc";
+import { Session } from "@/lib/types";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
+import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 
 import { cn } from "@/lib/utils";
 import { ChatList } from "@/components/chat/chat-list";
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { EmptyScreen } from "@/components/chat/empty-screen";
-import { ChatScrollAnchor } from "@/components/chat/chat-scroll-anchor";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
-  initialMessages?: Message[];
   id?: string;
+  session?: Session | null;
   welcome?: MDXRemoteProps | null;
   starters?: string | null;
 }
 
-export function Chat({
-  id,
-  initialMessages,
-  className,
-  welcome,
-  starters,
-}: ChatProps) {
+export function Chat({ id, className, welcome, starters, session }: ChatProps) {
   const path = usePathname();
   const router = useRouter();
+  const [input, setInput] = useState("");
+  const [messages] = useUIState();
+  const [aiState] = useAIState();
 
-  const {
-    messages,
-    append,
-    reload,
-    stop,
-    isLoading,
-    input,
-    setInput,
-    setMessages,
-  } = useChat({
-    initialMessages,
-    id,
-    body: {
-      id,
-    },
-    onResponse(response) {
-      if (response.status === 401) {
-        toast.error(response.statusText);
+  const [_, setNewChatId] = useLocalStorage("newChatId", id);
+
+  useEffect(() => {
+    if (session?.user) {
+      if (!path.includes("chat") && messages.length === 1) {
+        window.history.replaceState({}, "", `/chat/${id}`);
       }
-    },
-    onFinish() {
-      if (id && !path.includes("chat")) {
-        router.push(`/chat/${id}`);
-      }
-    },
+    }
+  }, [id, path, session?.user, messages]);
+
+  useEffect(() => {
+    const messagesLength = aiState.messages?.length;
+    if (messagesLength === 2) {
+      router.refresh();
+    }
+  }, [aiState.messages, router]);
+
+  useEffect(() => {
+    setNewChatId(id);
   });
+
+  const { messagesRef, scrollRef, visibilityRef, isAtBottom, scrollToBottom } =
+    useScrollAnchor();
+
   return (
-    <>
-      <div className={cn("pb-[200px] pt-4 md:pt-10", className)}>
+    <div
+      className="group w-full overflow-auto pl-0 peer-[[data-state=open]]:lg:pl-[250px] peer-[[data-state=open]]:xl:pl-[300px]"
+      ref={scrollRef}
+    >
+      <div
+        className={cn("pb-[200px] pt-4 md:pt-10", className)}
+        ref={messagesRef}
+      >
         {messages.length ? (
-          <>
-            <ChatList messages={messages} />
-            <ChatScrollAnchor trackVisibility={isLoading} />
-          </>
+          <ChatList messages={messages} isShared={false} session={session} />
         ) : (
-          <EmptyScreen
-            setInput={setInput}
-            welcome={welcome}
-            starters={starters}
-          />
+          <EmptyScreen welcome={welcome} />
         )}
+        <div className="h-px w-full" ref={visibilityRef} />
       </div>
       <ChatPanel
         id={id}
-        isLoading={isLoading}
-        stop={stop}
-        append={append}
-        reload={reload}
-        messages={messages}
         input={input}
         setInput={setInput}
-        setMessages={setMessages}
+        starters={starters}
+        isAtBottom={isAtBottom}
+        scrollToBottom={scrollToBottom}
       />
-    </>
+    </div>
   );
 }

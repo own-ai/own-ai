@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { createKnowledge } from "@/lib/actions";
+import { createKnowledge } from "@/lib/actions/app";
 import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import LoadingDots from "@/components/icons/loading-dots";

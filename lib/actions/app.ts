@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Knowledge, Ai, Access } from "@prisma/client";
 import { revalidateTag } from "next/cache";
-import { withKnowledgeAuth, withAiAuth, getMemberRole } from "./auth";
+import { withKnowledgeAuth, withAiAuth, getMemberRole } from "@/lib/auth";
 import { getSession } from "@/lib/auth";
 import {
   addDomainToVercel,
@@ -16,9 +16,7 @@ import {
 import { put } from "@vercel/blob";
 import { customAlphabet } from "nanoid";
 import { getBlurDataURL } from "@/lib/utils";
-import { getRatelimitResponse } from "./ratelimit";
-import { headers } from "next/headers";
-import { generateEmbeddings } from "./embeddings";
+import { generateEmbedding } from "@/lib/embeddings";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
 
 const nanoid = customAlphabet(
@@ -338,20 +336,11 @@ export const updateKnowledge = async (data: Knowledge) => {
     };
   }
 
-  let embeddings: number[] | null = null;
+  let embedding: number[] | null = null;
   if (data.learned) {
-    // Needs an embeddings update to learn the new content
-    const ratelimitResponse = await getRatelimitResponse(
-      headers().get("x-forwarded-for")!,
-    );
-    if (ratelimitResponse) {
-      return {
-        error: "You've reached your rate limit for embedding updates.",
-      };
-    }
-
+    // Needs an embedding update to learn the new content
     const document = [data.title, data.content].filter((s) => !!s).join("\n");
-    embeddings = document ? await generateEmbeddings(document) : null;
+    embedding = document ? await generateEmbedding(document) : null;
   }
 
   try {
@@ -366,10 +355,11 @@ export const updateKnowledge = async (data: Knowledge) => {
       },
     });
 
-    if (embeddings) {
+    if (embedding) {
+      const vector = `[${embedding.join(",")}]`;
       await prisma.$executeRaw`
         UPDATE "Knowledge"
-        SET vector = ${embeddings}::vector
+        SET vector = ${vector}::vector
         WHERE id = ${data.id}
       `;
     }

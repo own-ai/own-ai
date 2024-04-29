@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
-import { updateAi } from "@/lib/actions";
+import { updateAi } from "@/lib/actions/app";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";

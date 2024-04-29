@@ -1,31 +1,17 @@
-import { TogetherAIEmbeddings } from "@langchain/community/embeddings/togetherai";
-import { PrismaVectorStore } from "@langchain/community/vectorstores/prisma";
-import { Prisma, Knowledge } from "@prisma/client";
+import { embeddingsProvider } from "@/lib/embeddings-provider";
 import prisma from "@/lib/prisma";
 
 const MAX_KNOWLEDGE_CONSIDERED = 8;
 const MAX_KNOWLEDGE_LENGTH = 40000; // ~10000 tokens
 
-const embeddings = new TogetherAIEmbeddings({
-  apiKey: process.env.TOGETHER_API_KEY,
-  modelName: "togethercomputer/m2-bert-80M-32k-retrieval",
-});
-
-const vectorStore = PrismaVectorStore.withModel<Knowledge>(prisma).create(
-  embeddings,
-  {
-    prisma: Prisma,
-    tableName: "Knowledge",
-    vectorColumnName: "vector",
-    columns: {
-      id: PrismaVectorStore.IdColumn,
-      content: PrismaVectorStore.ContentColumn,
-    },
-  },
-);
-
-export async function generateEmbeddings(document: string): Promise<number[]> {
-  return await embeddings.embedQuery(document.slice(0, MAX_KNOWLEDGE_LENGTH));
+export async function generateEmbedding(document: string): Promise<number[]> {
+  const input = document.slice(0, MAX_KNOWLEDGE_LENGTH).replace(/\n/g, " ");
+  const embeddingData = await embeddingsProvider.embeddings.create({
+    model: process.env.EMBEDDINGS_API_MODEL!,
+    input,
+  });
+  const [{ embedding }] = embeddingData.data;
+  return embedding;
 }
 
 export async function getMostRelevantKnowledge(
@@ -33,15 +19,25 @@ export async function getMostRelevantKnowledge(
   query: string,
   numResults = 1,
 ) {
-  const vector = await generateEmbeddings(query);
-  return await vectorStore.similaritySearchVectorWithScore(vector, numResults, {
-    learned: {
-      equals: true,
-    },
-    aiId: {
-      equals: aiId,
-    },
-  });
+  if (!query.trim().length) {
+    return [];
+  }
+
+  const embedding = await generateEmbedding(query);
+  const vector = `[${embedding.join(",")}]`;
+  const results = await prisma.$queryRaw`
+    SELECT id, content
+    FROM "Knowledge"
+    WHERE "aiId" = ${aiId}
+    AND learned = TRUE
+    ORDER BY vector <=> ${vector}::vector
+    LIMIT ${numResults};
+  `;
+
+  return results as {
+    id: string;
+    content: string | null;
+  }[];
 }
 
 export async function getContext(aiId: string, query: string) {
@@ -51,7 +47,7 @@ export async function getContext(aiId: string, query: string) {
     MAX_KNOWLEDGE_CONSIDERED,
   );
   return relevantKnowledge
-    .map(([d]) => d.pageContent)
+    .map((knowledge) => knowledge.content)
     .join("\n\n")
     .slice(0, MAX_KNOWLEDGE_LENGTH);
 }

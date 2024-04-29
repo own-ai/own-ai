@@ -7,18 +7,19 @@ import { Bot } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { getMdxSource } from "@/lib/mdx";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { AI } from "@/lib/actions/ai";
 
 export default async function IndexPage({
   params,
 }: {
   params: { domain: string };
 }) {
-  const hasSession = !!(await getSession());
-  const id = hasSession ? nanoid() : undefined;
+  const session = await getSession();
+  const id = nanoid();
   const domain = decodeURIComponent(params.domain);
   const ai = await getAiData(domain);
   if (!ai) {
-    if (hasSession) {
+    if (session?.user) {
       return (
         <div className="m-4">
           <Alert variant="destructive">
@@ -53,6 +54,13 @@ export default async function IndexPage({
   const welcome = ai.welcome ? await getMdxSource(ai.welcome) : null;
 
   return (
-    <Chat id={id} welcome={welcome} starters={JSON.stringify(ai.starters)} />
+    <AI initialAIState={{ aiId: ai.id, chatId: id, messages: [] }}>
+      <Chat
+        id={id}
+        session={session}
+        welcome={welcome}
+        starters={JSON.stringify(ai.starters)}
+      />
+    </AI>
   );
 }

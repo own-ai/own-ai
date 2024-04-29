@@ -11,7 +11,10 @@ export default function MDX({ source }: { source: MDXRemoteProps }) {
   };
 
   return (
-    <article className="mdx" suppressHydrationWarning={true}>
+    <article
+      className="prose dark:prose-invert prose-headings:mt-8 prose-headings:font-cal prose-headings:font-semibold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg"
+      suppressHydrationWarning={true}
+    >
       {/* @ts-ignore */}
       <MDXRemote {...source} components={components} />
     </article>
