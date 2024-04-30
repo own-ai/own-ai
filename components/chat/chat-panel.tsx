@@ -11,6 +11,7 @@ import type { AI } from "@/lib/actions/ai";
 import { nanoid } from "nanoid";
 import { UserMessage } from "@/components/aiui";
 import { ConversationStarter } from "@/lib/types";
+import { toast } from "sonner";
 
 export interface ChatPanelProps {
   id?: string;
@@ -65,14 +66,17 @@ export function ChatPanel({
                     },
                   ]);
 
-                  const responseMessage = await submitUserMessage(
-                    example.message,
-                  );
-
-                  setMessages((currentMessages) => [
-                    ...currentMessages,
-                    responseMessage,
-                  ]);
+                  try {
+                    const responseMessage = await submitUserMessage(
+                      example.message,
+                    );
+                    setMessages((currentMessages) => [
+                      ...currentMessages,
+                      responseMessage,
+                    ]);
+                  } catch (error: any) {
+                    toast.error(error);
+                  }
                 }}
               >
                 <div className="text-sm font-semibold">{example.heading}</div>

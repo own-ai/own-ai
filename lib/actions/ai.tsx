@@ -14,10 +14,21 @@ import { Chat } from "@/lib/types";
 import { canUseAi, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getContext } from "@/lib/embeddings";
-import { aiProvider } from "../ai-provider";
+import { aiProvider } from "@/lib/ai-provider";
+import { ratelimit } from "@/lib/ratelimit";
+import { headers } from "next/headers";
 
 async function submitUserMessage(content: string) {
   "use server";
+
+  const limit = await ratelimit(
+    `ai_inference_${headers().get("x-forwarded-for")}`,
+  );
+  if (limit) {
+    throw new Error(
+      `You have sent many requests in a short time. Please wait ${limit.toFixed()} seconds or contact us to get a higher limit.`,
+    );
+  }
 
   const aiState = getMutableAIState<typeof AI>();
 
@@ -27,9 +38,7 @@ async function submitUserMessage(content: string) {
     },
   });
   if (!ai || !(await canUseAi(ai, (await getSession())?.user))) {
-    return new Response("Unauthorized", {
-      status: 401,
-    });
+    throw new Error("You are not authorized to use this AI.");
   }
 
   aiState.update({

@@ -18,6 +18,7 @@ import { customAlphabet } from "nanoid";
 import { getBlurDataURL } from "@/lib/utils";
 import { generateEmbedding } from "@/lib/embeddings";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { ratelimit } from "@/lib/ratelimit";
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -339,6 +340,12 @@ export const updateKnowledge = async (data: Knowledge) => {
   let embedding: number[] | null = null;
   if (data.learned) {
     // Needs an embedding update to learn the new content
+    const limit = await ratelimit(`embeddings_update_${session.user.id}`);
+    if (limit) {
+      return {
+        error: `You have sent many requests in a short time. Please wait ${limit.toFixed()} seconds or contact us to get a higher limit.`,
+      };
+    }
     const document = [data.title, data.content].filter((s) => !!s).join("\n");
     embedding = document ? await generateEmbedding(document) : null;
   }

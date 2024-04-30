@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { getRatelimitResponse } from "@/lib/ratelimit";
 
 export const config = {
   matcher: [
@@ -17,16 +16,6 @@ export const config = {
 
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
-
-  // Rate Limiting for POST requests (generating AI responses, computing embeddings, ...)
-  if (req.method === "POST") {
-    const ratelimitResponse = await getRatelimitResponse(
-      req.headers.get("x-forwarded-for")!,
-    );
-    if (ratelimitResponse) {
-      return ratelimitResponse;
-    }
-  }
 
   // Get hostname of request (e.g. demo.ownai.com, demo.localhost:3000)
   let hostname = req.headers

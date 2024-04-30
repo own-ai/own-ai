@@ -1,36 +1,25 @@
 import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
 
-export async function getRatelimitResponse(
-  ip: string,
-): Promise<Response | null> {
+/**
+ * Enables a sliding window rate limiting of 60 events in 10 minutes.
+ * @param id A unique identifier for the person or source to be limited.
+ * @returns false (not rejected) or the number of seconds until the limit resets
+ */
+export async function ratelimit(id: string): Promise<false | number> {
   if (
-    process.env.NODE_ENV !== "development" &&
-    process.env.KV_REST_API_URL &&
-    process.env.KV_REST_API_TOKEN
+    process.env.NODE_ENV === "development" ||
+    !process.env.KV_REST_API_URL ||
+    !process.env.KV_REST_API_TOKEN
   ) {
-    const ratelimit = new Ratelimit({
-      redis: kv,
-      limiter: Ratelimit.slidingWindow(60, "10m"),
-    });
-
-    const { success, limit, reset, remaining } = await ratelimit.limit(
-      `ownai_ratelimit_${ip}`,
-    );
-
-    if (!success) {
-      return new Response(
-        "You have sent many requests in a short time. Please wait a while or contact us to get a higher limit.",
-        {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.toString(),
-            "X-RateLimit-Remaining": remaining.toString(),
-            "X-RateLimit-Reset": reset.toString(),
-          },
-        },
-      );
-    }
+    return false;
   }
-  return null;
+
+  const ratelimit = new Ratelimit({
+    redis: kv,
+    limiter: Ratelimit.slidingWindow(60, "10m"),
+  });
+
+  const { success, reset } = await ratelimit.limit(`ratelimit_${id}`);
+  return success ? false : (reset - Date.now()) / 1000;
 }

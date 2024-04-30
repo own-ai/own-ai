@@ -102,16 +102,20 @@ export default function KnowledgeEditor({
           <button
             onClick={() => {
               startTransitionLearning(async () => {
-                await updateKnowledge({ ...data, learned: !data.learned }).then(
-                  () => {
-                    toast.success(
-                      `Successfully ${
-                        data.learned ? "unlearned" : "learned"
-                      } your knowledge.`,
-                    );
-                    setData((prev) => ({ ...prev, learned: !prev.learned }));
-                  },
-                );
+                const response = await updateKnowledge({
+                  ...data,
+                  learned: !data.learned,
+                });
+                if ("error" in response) {
+                  toast.error(response.error);
+                } else {
+                  toast.success(
+                    `Successfully ${
+                      data.learned ? "unlearned" : "learned"
+                    } your knowledge.`,
+                  );
+                  setData((prev) => ({ ...prev, learned: !prev.learned }));
+                }
               });
             }}
             className={cn(

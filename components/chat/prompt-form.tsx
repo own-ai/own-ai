@@ -68,9 +68,7 @@ export function PromptForm({
             responseMessage,
           ]);
         } catch (error: any) {
-          toast.error(
-            "You have sent many requests in a short time. Please wait a while or contact us to get a higher limit.",
-          );
+          toast.error(error);
         }
       }}
     >
