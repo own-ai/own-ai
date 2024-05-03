@@ -3,9 +3,9 @@ import "server-only";
 import {
   createAI,
   createStreamableValue,
-  experimental_streamUI,
   getAIState,
   getMutableAIState,
+  streamUI,
 } from "ai/rsc";
 import { headers } from "next/headers";
 
@@ -64,7 +64,7 @@ async function submitUserMessage(content: string) {
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>;
   let textNode: undefined | React.ReactNode;
 
-  const ui = await experimental_streamUI({
+  const ui = await streamUI({
     model: aiProvider(ai.model),
     initial: <SpinnerMessage />,
     temperature: 0.7,
