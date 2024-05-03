@@ -1,12 +1,12 @@
+import { cx } from "class-variance-authority";
 import {
-  TiptapLink,
-  UpdatedImage,
-  TaskList,
-  TaskItem,
   HorizontalRule,
   StarterKit,
+  TaskItem,
+  TaskList,
+  TiptapLink,
+  UpdatedImage,
 } from "novel/extensions";
-import { cx } from "class-variance-authority";
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {

@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
+
+import { cn } from "@/lib/utils";
 
 export default function AiSettingsNav({
   id,

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Suspense } from "react";
+
 import LoginForm from "@/components/login-form";
 
 export default function LoginPage() {

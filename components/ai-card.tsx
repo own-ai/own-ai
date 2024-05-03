@@ -1,9 +1,10 @@
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
-import BlurImage from "@/components/blur-image";
-import { placeholderBlurhash } from "@/lib/utils";
 import { Ai } from "@prisma/client";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import BlurImage from "@/components/blur-image";
+import { getSession } from "@/lib/auth";
+import { placeholderBlurhash } from "@/lib/utils";
 
 export default async function AiCard({ data }: { data: Ai }) {
   const session = await getSession();

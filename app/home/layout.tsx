@@ -1,12 +1,13 @@
-import { Metadata } from "next";
-import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Metadata } from "next";
+import Link from "next/link";
+
 import { MainNav } from "@/components/home/main-nav";
 import { SiteFooter } from "@/components/home/site-footer";
 import { Providers } from "@/components/providers";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const title = "ownAI – Have your own AI";
 const description = "Have your own AI.";

@@ -1,12 +1,13 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
+import va from "@vercel/analytics";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
+
+import LoadingDots from "@/components/icons/loading-dots";
 import { deleteKnowledge } from "@/lib/actions/app";
-import va from "@vercel/analytics";
+import { cn } from "@/lib/utils";
 
 export default function DeleteKnowledgeForm({ id }: { id: string }) {
   const router = useRouter();

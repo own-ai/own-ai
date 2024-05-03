@@ -1,7 +1,8 @@
-import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
-import { cn } from "@/lib/utils";
 import type { Viewport } from "next";
+
+import { cn } from "@/lib/utils";
+import { cal, inter } from "@/styles/fonts";
+import "@/styles/globals.css";
 
 export const viewport: Viewport = {
   width: "device-width",

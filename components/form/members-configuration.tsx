@@ -1,8 +1,8 @@
 "use client";
 
-import type { AiMember, AiMemberRole } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
+import type { AiMember, AiMemberRole } from "@/lib/types";
 
 export default function MembersConfiguration({
   members,

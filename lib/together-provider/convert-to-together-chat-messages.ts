@@ -2,6 +2,7 @@ import {
   LanguageModelV1Prompt,
   UnsupportedFunctionalityError,
 } from "@ai-sdk/provider";
+
 import { TogetherChatPrompt } from "./together-chat-prompt";
 
 export function convertToTogetherChatMessages(

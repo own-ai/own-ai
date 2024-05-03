@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
-import { proPlan, getUserSubscriptionPlan } from "@/lib/subscription";
+import { getUserSubscriptionPlan, proPlan } from "@/lib/subscription";
 
 const billingUrl = process.env.NEXT_PUBLIC_VERCEL_ENV
   ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/settings`

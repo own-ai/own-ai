@@ -1,9 +1,9 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/chat/sidebar";
 import { Button } from "@/components/ui/button";
 import { IconSidebar } from "@/components/ui/icons";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface SidebarMobileProps {
   children: React.ReactNode;

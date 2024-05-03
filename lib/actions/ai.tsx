@@ -2,21 +2,22 @@ import "server-only";
 
 import {
   createAI,
-  getMutableAIState,
-  getAIState,
-  experimental_streamUI,
   createStreamableValue,
+  experimental_streamUI,
+  getAIState,
+  getMutableAIState,
 } from "ai/rsc";
-import { BotMessage, UserMessage, SpinnerMessage } from "@/components/aiui";
-import { nanoid } from "@/lib/utils";
-import { saveChat } from "@/lib/actions/chat";
-import { Chat } from "@/lib/types";
-import { canUseAi, getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { getContext } from "@/lib/embeddings";
-import { aiProvider } from "@/lib/ai-provider";
-import { ratelimit } from "@/lib/ratelimit";
 import { headers } from "next/headers";
+
+import { BotMessage, SpinnerMessage, UserMessage } from "@/components/aiui";
+import { saveChat } from "@/lib/actions/chat";
+import { aiProvider } from "@/lib/ai-provider";
+import { canUseAi, getSession } from "@/lib/auth";
+import { getContext } from "@/lib/embeddings";
+import prisma from "@/lib/prisma";
+import { ratelimit } from "@/lib/ratelimit";
+import { Chat } from "@/lib/types";
+import { nanoid } from "@/lib/utils";
 
 async function submitUserMessage(content: string) {
   "use server";

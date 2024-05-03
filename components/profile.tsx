@@ -1,10 +1,11 @@
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { UserCircle2 } from "lucide-react";
-import LogoutButton from "./logout-button";
-import { ThemeToggle } from "./theme-toggle";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import LogoutButton from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getSession } from "@/lib/auth";
 
 export default async function Profile() {
   const session = await getSession();

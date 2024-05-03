@@ -1,14 +1,16 @@
 "use client";
 
-import { IconMessage, IconUser } from "@/components/ui/icons";
-import { cn } from "@/lib/utils";
-import { spinner } from "./spinner";
-import { CodeBlock } from "../ui/codeblock";
-import { MemoizedReactMarkdown } from "@/components/chat/markdown";
+import { StreamableValue } from "ai/rsc";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { StreamableValue } from "ai/rsc";
+
+import { MemoizedReactMarkdown } from "@/components/chat/markdown";
+import { CodeBlock } from "@/components/ui/codeblock";
+import { IconMessage, IconUser } from "@/components/ui/icons";
 import { useStreamableText } from "@/lib/hooks/use-streamable-text";
+import { cn } from "@/lib/utils";
+
+import { spinner } from "./spinner";
 
 // Different types of message bubbles.
 

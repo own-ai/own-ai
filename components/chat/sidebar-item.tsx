@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import * as React from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { IconMessage, IconUsers } from "@/components/ui/icons";

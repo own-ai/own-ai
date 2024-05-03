@@ -1,8 +1,9 @@
-import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
-import KnowledgeCard from "./knowledge-card";
+
 import CreateKnowledgeButton from "@/components/create-knowledge-button";
+import KnowledgeCard from "@/components/knowledge-card";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export default async function Knowledges({
   aiId,

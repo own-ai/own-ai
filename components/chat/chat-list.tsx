@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+
 import { Separator } from "@/components/ui/separator";
 import { UIState } from "@/lib/actions/ai";
 import { Session } from "@/lib/types";

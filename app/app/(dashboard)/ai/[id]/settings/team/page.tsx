@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/app";
 import { getSession } from "@/lib/auth";

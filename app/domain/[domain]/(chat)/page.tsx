@@ -1,13 +1,14 @@
+import { Bot } from "lucide-react";
 import { redirect } from "next/navigation";
-import { getAiData } from "@/lib/fetchers";
-import { nanoid } from "@/lib/utils";
+
 import { Chat } from "@/components/chat/chat";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Bot } from "lucide-react";
+import { AI } from "@/lib/actions/ai";
 import { getSession } from "@/lib/auth";
+import { getAiData } from "@/lib/fetchers";
 import { getMdxSource } from "@/lib/mdx";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
-import { AI } from "@/lib/actions/ai";
+import { nanoid } from "@/lib/utils";
 
 export default async function IndexPage({
   params,

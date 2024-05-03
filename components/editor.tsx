@@ -1,10 +1,5 @@
 "use client";
 
-import { editorExtensions } from "@/lib/editor/extensions";
-import { LinkSelector } from "@/lib/editor/link-selector";
-import { NodeSelector } from "@/lib/editor/node-selector";
-import { slashCommand, suggestionItems } from "@/lib/editor/slash-command";
-import { TextButtons } from "@/lib/editor/text-buttons";
 import {
   EditorBubble,
   EditorCommand,
@@ -14,8 +9,14 @@ import {
   EditorRoot,
   JSONContent,
 } from "novel";
-import { handleCommandNavigation, Placeholder } from "novel/extensions";
+import { Placeholder, handleCommandNavigation } from "novel/extensions";
 import { useState } from "react";
+
+import { editorExtensions } from "@/lib/editor/extensions";
+import { LinkSelector } from "@/lib/editor/link-selector";
+import { NodeSelector } from "@/lib/editor/node-selector";
+import { slashCommand, suggestionItems } from "@/lib/editor/slash-command";
+import { TextButtons } from "@/lib/editor/text-buttons";
 
 export default function Editor({
   className,

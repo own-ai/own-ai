@@ -1,21 +1,21 @@
+import { Popover } from "@radix-ui/react-popover";
 import {
   Check,
+  CheckSquare,
   ChevronDown,
+  Code,
   Heading1,
   Heading2,
   Heading3,
-  TextQuote,
   ListOrdered,
-  TextIcon,
-  Code,
-  CheckSquare,
   type LucideIcon,
+  TextIcon,
+  TextQuote,
 } from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
-import { Popover } from "@radix-ui/react-popover";
-import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export type SelectorItem = {
   name: string;

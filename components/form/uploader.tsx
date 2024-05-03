@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+
+import { cn } from "@/lib/utils";
 
 export default function Uploader({
   defaultValue,

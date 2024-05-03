@@ -1,17 +1,17 @@
 "use client";
 
+import { useAIState, useUIState } from "ai/rsc";
 import { MDXRemoteProps } from "next-mdx-remote";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useUIState, useAIState } from "ai/rsc";
-import { Session } from "@/lib/types";
-import { useLocalStorage } from "@/lib/hooks/use-local-storage";
-import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
 
-import { cn } from "@/lib/utils";
 import { ChatList } from "@/components/chat/chat-list";
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { EmptyScreen } from "@/components/chat/empty-screen";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
+import { useScrollAnchor } from "@/lib/hooks/use-scroll-anchor";
+import { Session } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
   id?: string;

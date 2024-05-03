@@ -1,4 +1,5 @@
 import { MDXRemoteProps } from "next-mdx-remote";
+
 import MDX from "@/components/mdx";
 
 export function EmptyScreen({ welcome }: { welcome?: MDXRemoteProps | null }) {

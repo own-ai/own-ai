@@ -1,8 +1,8 @@
 "use client";
 
+import va from "@vercel/analytics";
 import * as React from "react";
 import { toast } from "sonner";
-import va from "@vercel/analytics";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { UserSubscriptionPlan } from "@/lib/types";

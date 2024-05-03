@@ -1,10 +1,13 @@
 "use client";
 
+import { useActions, useUIState } from "ai/rsc";
+import { nanoid } from "nanoid";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import Textarea from "react-textarea-autosize";
-import { useActions, useUIState } from "ai/rsc";
+import { toast } from "sonner";
+
 import { UserMessage } from "@/components/aiui";
-import { type AI } from "@/lib/actions/ai";
 import { Button } from "@/components/ui/button";
 import { IconArrowElbow, IconPlus } from "@/components/ui/icons";
 import {
@@ -12,10 +15,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { type AI } from "@/lib/actions/ai";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
-import { nanoid } from "nanoid";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 export function PromptForm({
   input,

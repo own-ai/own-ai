@@ -1,5 +1,5 @@
-import { Message } from "ai";
 import { Ai, User } from "@prisma/client";
+import { Message } from "ai";
 
 export interface Session {
   user: {

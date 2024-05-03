@@ -2,10 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clearChats, getChats } from "@/lib/actions/chat";
+
 import { ClearHistory } from "@/components/chat/clear-history";
 import { SidebarItems } from "@/components/chat/sidebar-items";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { clearChats, getChats } from "@/lib/actions/chat";
 import { Chat } from "@/lib/types";
 
 interface SidebarListProps {

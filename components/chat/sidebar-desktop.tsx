@@ -1,6 +1,6 @@
+import { ChatHistory } from "@/components/chat/chat-history";
 import { Sidebar } from "@/components/chat/sidebar";
 import { getSession } from "@/lib/auth";
-import { ChatHistory } from "@/components/chat/chat-history";
 
 interface SidebarDesktopProps {
   aiId?: string;

@@ -1,17 +1,19 @@
 "use client";
 
-import { toast } from "sonner";
-import { createAi } from "@/lib/actions/app";
+import va from "@vercel/analytics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
-import { cn } from "@/lib/utils";
-import LoadingDots from "@/components/icons/loading-dots";
-import { useModal } from "./provider";
-import va from "@vercel/analytics";
 import { useEffect, useState } from "react";
-import { UserSubscriptionPlan } from "@/lib/types";
+import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
+
+import LoadingDots from "@/components/icons/loading-dots";
+import { createAi } from "@/lib/actions/app";
 import { slugify } from "@/lib/domains";
+import { UserSubscriptionPlan } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+import { useModal } from "./provider";
 
 export default function CreateAiModal({
   subscriptionPlan,

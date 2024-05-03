@@ -1,9 +1,10 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TailwindIndicator } from "@/components/chat/tailwind-indicator";
-import { Providers } from "@/components/chat/providers";
-import { Header } from "@/components/chat/header";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import { Header } from "@/components/chat/header";
+import { Providers } from "@/components/chat/providers";
+import { TailwindIndicator } from "@/components/chat/tailwind-indicator";
+import { Toaster } from "@/components/ui/sonner";
 import { getPublicAiData } from "@/lib/fetchers";
 
 export async function generateMetadata({

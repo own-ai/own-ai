@@ -1,8 +1,8 @@
 "use client";
 
-import { ConversationStarter } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
+import { ConversationStarter } from "@/lib/types";
 
 export default function ConversationStartersConfiguration({
   starters,

@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+
 import Form from "@/components/form";
 import DeleteAiForm from "@/components/form/delete-ai-form";
 import { updateAi } from "@/lib/actions/app";

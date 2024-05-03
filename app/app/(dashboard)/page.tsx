@@ -1,10 +1,11 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
+
 import Ais from "@/components/ais";
 import Knowledges from "@/components/knowledges";
-import PlaceholderCard from "@/components/placeholder-card";
 import OverviewAisCTA from "@/components/overview-ais-cta";
+import PlaceholderCard from "@/components/placeholder-card";
 import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 
 export default async function Overview() {

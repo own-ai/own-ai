@@ -1,15 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
 import { Knowledge } from "@prisma/client";
-import { updateKnowledge } from "@/lib/actions/app";
-import Editor from "@/components/editor";
-import { cn } from "@/lib/utils";
-import LoadingDots from "./icons/loading-dots";
-import { toast } from "sonner";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Bot } from "lucide-react";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { useDebouncedCallback } from "use-debounce";
+
+import Editor from "@/components/editor";
+import LoadingDots from "@/components/icons/loading-dots";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { updateKnowledge } from "@/lib/actions/app";
+import { cn } from "@/lib/utils";
 
 type KnowledgeWithAi = Knowledge & {
   ai: {

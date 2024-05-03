@@ -1,21 +1,23 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
+import va from "@vercel/analytics";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import Editor from "@/components/editor";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import DomainStatus from "./domain-status";
-import DomainConfiguration from "./domain-configuration";
-import Uploader from "./uploader";
-import va from "@vercel/analytics";
-import ConversationStartersConfiguration from "./conversation-starters-configuration";
-import MembersConfiguration from "./members-configuration";
+
+import Editor from "@/components/editor";
+import LoadingDots from "@/components/icons/loading-dots";
 import type { AiMember, ConversationStarter } from "@/lib/types";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+import ConversationStartersConfiguration from "./conversation-starters-configuration";
+import DomainConfiguration from "./domain-configuration";
+import DomainStatus from "./domain-status";
+import MembersConfiguration from "./members-configuration";
+import Uploader from "./uploader";
 
 export default function Form({
   title,

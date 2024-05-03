@@ -1,6 +1,6 @@
-import * as React from "react";
-import Link from "next/link";
 import { Bot } from "lucide-react";
+import Link from "next/link";
+import * as React from "react";
 
 import { NavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";

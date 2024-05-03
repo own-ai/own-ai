@@ -1,5 +1,5 @@
-import { kv } from "@vercel/kv";
 import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
 
 /**
  * Enables a sliding window rate limiting of 60 events in 10 minutes.

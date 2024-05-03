@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { type DialogProps } from "@radix-ui/react-dialog";
+import * as React from "react";
 import { toast } from "sonner";
 
-import { ServerActionResult, type Chat } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { IconSpinner } from "@/components/ui/icons";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
+import { type Chat, ServerActionResult } from "@/lib/types";
 
 interface ChatShareDialogProps extends DialogProps {
   chat: Pick<Chat, "id" | "title" | "messages">;

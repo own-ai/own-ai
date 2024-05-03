@@ -1,10 +1,11 @@
-import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
+
+import AiCard from "@/components/ai-card";
+import CreateAiButton from "@/components/create-ai-button";
+import CreateAiModal from "@/components/modal/create-ai";
+import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
-import AiCard from "./ai-card";
-import CreateAiButton from "./create-ai-button";
-import CreateAiModal from "./modal/create-ai";
 
 export default async function Ais({ limit }: { limit?: number }) {
   const session = await getSession();

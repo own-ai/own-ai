@@ -1,11 +1,12 @@
-import { getMemberRole, getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import Knowledges from "@/components/knowledges";
-import CreateKnowledgeButton from "@/components/create-knowledge-button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Bot } from "lucide-react";
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+
+import CreateKnowledgeButton from "@/components/create-knowledge-button";
+import Knowledges from "@/components/knowledges";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getMemberRole, getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export default async function AiKnowledges({
   params,

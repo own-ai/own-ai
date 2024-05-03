@@ -1,11 +1,11 @@
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { getSession } from "@/lib/auth";
+import { Chat } from "@/components/chat/chat";
 import { AI } from "@/lib/actions/ai";
 import { getChat } from "@/lib/actions/chat";
+import { getSession } from "@/lib/auth";
 import { getAiData } from "@/lib/fetchers";
-import { Chat } from "@/components/chat/chat";
 
 export interface ChatPageProps {
   params: {

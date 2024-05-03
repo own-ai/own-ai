@@ -1,7 +1,7 @@
-import { createTransport } from "nodemailer";
 import type { Theme } from "next-auth";
 import type { SendVerificationRequestParams } from "next-auth/providers/email";
 import { headers } from "next/headers";
+import { createTransport } from "nodemailer";
 
 export async function sendVerificationRequest(
   params: SendVerificationRequestParams,

@@ -1,10 +1,11 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { ReactNode, Suspense, useState } from "react";
 import { toast } from "sonner";
-import { useState, Suspense, ReactNode } from "react";
+
+import LoadingDots from "@/components/icons/loading-dots";
 
 export default function LoginForm({
   title,

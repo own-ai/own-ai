@@ -1,7 +1,8 @@
+import { notFound, redirect } from "next/navigation";
+
+import DeleteKnowledgeForm from "@/components/form/delete-knowledge-form";
 import { getMemberRole, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import DeleteKnowledgeForm from "@/components/form/delete-knowledge-form";
 
 export default async function KnowledgeSettings({
   params,

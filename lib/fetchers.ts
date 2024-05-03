@@ -1,8 +1,9 @@
-import { unstable_cache } from "next/cache";
-import prisma from "@/lib/prisma";
-import { canUseAi, getSession } from "@/lib/auth";
 import { Ai, User } from "@prisma/client";
-import { PublicAiData } from "./types";
+import { unstable_cache } from "next/cache";
+
+import { canUseAi, getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { PublicAiData } from "@/lib/types";
 
 async function fetchAiData(
   domain: string,

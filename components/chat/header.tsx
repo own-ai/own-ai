@@ -1,13 +1,14 @@
-import * as React from "react";
 import Link from "next/link";
+import * as React from "react";
 
-import { getSession } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/components/chat/user-menu";
+import { Button } from "@/components/ui/button";
+import { getSession } from "@/lib/auth";
+import { PublicAiData } from "@/lib/types";
+
+import { ChatHistory } from "./chat-history";
 import { SidebarMobile } from "./sidebar-mobile";
 import { SidebarToggle } from "./sidebar-toggle";
-import { ChatHistory } from "./chat-history";
-import { PublicAiData } from "@/lib/types";
 
 async function SidebarAndTitle({
   title,

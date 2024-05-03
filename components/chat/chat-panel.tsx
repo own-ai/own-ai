@@ -1,17 +1,18 @@
-import * as React from "react";
-import { shareChat } from "@/lib/actions/chat";
-import { Button } from "@/components/ui/button";
-import { PromptForm } from "@/components/chat/prompt-form";
-import { ButtonScrollToBottom } from "@/components/chat/button-scroll-to-bottom";
-import { IconShare } from "@/components/ui/icons";
-import { FooterText } from "@/components/chat/footer";
-import { ChatShareDialog } from "@/components/chat/chat-share-dialog";
 import { useAIState, useActions, useUIState } from "ai/rsc";
-import type { AI } from "@/lib/actions/ai";
 import { nanoid } from "nanoid";
-import { UserMessage } from "@/components/aiui";
-import { ConversationStarter } from "@/lib/types";
+import * as React from "react";
 import { toast } from "sonner";
+
+import { UserMessage } from "@/components/aiui";
+import { ButtonScrollToBottom } from "@/components/chat/button-scroll-to-bottom";
+import { ChatShareDialog } from "@/components/chat/chat-share-dialog";
+import { FooterText } from "@/components/chat/footer";
+import { PromptForm } from "@/components/chat/prompt-form";
+import { Button } from "@/components/ui/button";
+import { IconShare } from "@/components/ui/icons";
+import type { AI } from "@/lib/actions/ai";
+import { shareChat } from "@/lib/actions/chat";
+import { ConversationStarter } from "@/lib/types";
 
 export interface ChatPanelProps {
   id?: string;

@@ -2,10 +2,10 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Chat } from "@/lib/types";
-import { removeChat, shareChat } from "@/lib/actions/chat";
 import { SidebarActions } from "@/components/chat/sidebar-actions";
 import { SidebarItem } from "@/components/chat/sidebar-item";
+import { removeChat, shareChat } from "@/lib/actions/chat";
+import { Chat } from "@/lib/types";
 
 interface SidebarItemsProps {
   chats?: Chat[];

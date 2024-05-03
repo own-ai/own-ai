@@ -1,7 +1,8 @@
 "use client";
 
-import { useModal } from "@/components/modal/provider";
 import { ReactNode } from "react";
+
+import { useModal } from "@/components/modal/provider";
 
 export default function CreateAiButton({ children }: { children: ReactNode }) {
   const modal = useModal();

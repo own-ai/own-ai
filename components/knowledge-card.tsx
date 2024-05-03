@@ -1,4 +1,4 @@
-import { Knowledge, Ai } from "@prisma/client";
+import { Ai, Knowledge } from "@prisma/client";
 import Link from "next/link";
 
 export default function KnowledgeCard({

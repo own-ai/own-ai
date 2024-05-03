@@ -1,8 +1,9 @@
 "use client";
 
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote";
-import { replaceLinks } from "@/lib/remark-plugins";
+
 import BlurImage from "@/components/blur-image";
+import { replaceLinks } from "@/lib/remark-plugins";
 
 export default function MDX({ source }: { source: MDXRemoteProps }) {
   const components = {

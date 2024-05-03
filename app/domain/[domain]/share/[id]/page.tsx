@@ -1,11 +1,11 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { formatDate } from "@/lib/utils";
-import { getSharedChat } from "@/lib/actions/chat";
 import { ChatList } from "@/components/chat/chat-list";
 import { FooterText } from "@/components/chat/footer";
 import { AI, UIState, getUIStateFromAIState } from "@/lib/actions/ai";
+import { getSharedChat } from "@/lib/actions/chat";
+import { formatDate } from "@/lib/utils";
 
 // The edge runtime needs next-auth 5
 // export const runtime = "edge";

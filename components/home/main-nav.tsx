@@ -1,13 +1,13 @@
 "use client";
 
-import * as React from "react";
+import { Bot, X } from "lucide-react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { Bot, X } from "lucide-react";
+import * as React from "react";
 
+import { MobileNav } from "@/components/home/mobile-nav";
 import { NavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { MobileNav } from "@/components/home/mobile-nav";
 
 interface MainNavProps {
   items?: NavItem[];

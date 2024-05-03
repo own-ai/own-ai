@@ -9,7 +9,7 @@ import {
   Text,
   TextQuote,
 } from "lucide-react";
-import { Command, renderItems, createSuggestionItems } from "novel/extensions";
+import { Command, createSuggestionItems, renderItems } from "novel/extensions";
 
 export const suggestionItems = createSuggestionItems([
   {
