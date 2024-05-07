@@ -60,12 +60,12 @@ export default async function AiSettingsIndex({
 
       <Form
         title="Model"
-        description="ownAI offers the leading AI models from the open source community to contribute to the free and independent use of AI technology. Please choose a model as the basis for your AI."
-        helpText="Further models will be available soon."
+        description="ownAI offers the leading AI models from the open source community to contribute to the free and independent use of AI technology. Please select a model to base your AI on."
         inputAttrs={{
           name: "model",
           type: "select",
           defaultValue: data?.model!,
+          options: JSON.parse(process.env.AI_MODELS || "[]"),
         }}
         handleSubmit={updateAi}
       />

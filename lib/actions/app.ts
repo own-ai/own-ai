@@ -51,6 +51,9 @@ export const createAi = async (formData: FormData) => {
   const subdomain = formData.get("subdomain") as string;
   const access = formData.get("access") as Access;
 
+  // Use the first model as default
+  const model = JSON.parse(process.env.AI_MODELS || "null")?.[0]?.key as string;
+
   if (!isValidSubdomain(subdomain)) {
     return {
       error:
@@ -65,6 +68,7 @@ export const createAi = async (formData: FormData) => {
         instructions,
         subdomain,
         access,
+        model,
         user: {
           connect: {
             id: session.user.id,

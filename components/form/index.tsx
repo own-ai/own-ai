@@ -40,6 +40,7 @@ export default function Form({
     maxLength?: number;
     pattern?: string;
     disabled?: boolean;
+    options?: { key: string; label: string }[];
   };
   handleSubmit: any;
   needsPro?: boolean;
@@ -166,9 +167,11 @@ export default function Form({
             defaultValue={inputAttrs.defaultValue}
             className="w-full max-w-md rounded-md border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
           >
-            <option value="mistralai/Mixtral-8x7B-Instruct-v0.1">
-              Mixtral 8x7B Instruct v0.1
-            </option>
+            {(inputAttrs.options || []).map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.label}
+              </option>
+            ))}
           </select>
         ) : inputAttrs.name === "subdomain" ? (
           <div className="flex w-full max-w-md">
