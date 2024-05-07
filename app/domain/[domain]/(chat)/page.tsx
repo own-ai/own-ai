@@ -10,6 +10,8 @@ import { getMdxSource } from "@/lib/mdx";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
 import { nanoid } from "@/lib/utils";
 
+export const maxDuration = 60;
+
 export default async function IndexPage({
   params,
 }: {

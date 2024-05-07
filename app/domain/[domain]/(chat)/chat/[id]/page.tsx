@@ -7,6 +7,8 @@ import { getChat } from "@/lib/actions/chat";
 import { getSession } from "@/lib/auth";
 import { getAiData } from "@/lib/fetchers";
 
+export const maxDuration = 60;
+
 export interface ChatPageProps {
   params: {
     domain: string;
