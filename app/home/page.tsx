@@ -26,16 +26,20 @@ export default function HomePage() {
             a helpful AI assistant for your team, even under your own company
             domain.
           </p>
-          <div className="space-x-4">
+          <div className="mt-4 space-x-4">
             <Link
               href={
                 process.env.NEXT_PUBLIC_VERCEL_ENV
                   ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
                   : `http://app.localhost:3000`
               }
-              className={cn(buttonVariants({ size: "lg" }), "mt-4")}
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "mt-4",
+                "shadow-xl",
+              )}
             >
-              Get Started —&nbsp;<em>it&apos;s free</em>
+              Create your own AI —&nbsp;<em>it&apos;s free</em>
             </Link>
             <Link
               href={
@@ -50,7 +54,7 @@ export default function HomePage() {
                 "mt-4",
               )}
             >
-              Demo
+              Chat with our Demo AI
             </Link>
           </div>
         </div>
@@ -232,6 +236,37 @@ export default function HomePage() {
             This makes us independent of well-known large AI companies. You can
             even download your AIs and run them on your own.
           </p>
+          <div className="mt-4 space-x-4">
+            <Link
+              href={
+                process.env.NEXT_PUBLIC_VERCEL_ENV
+                  ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+                  : `http://app.localhost:3000`
+              }
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "mt-4",
+                "shadow-xl",
+              )}
+            >
+              Create your own AI —&nbsp;<em>it&apos;s free</em>
+            </Link>
+            <Link
+              href={
+                process.env.NEXT_PUBLIC_VERCEL_ENV
+                  ? `https://demo.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+                  : `http://demo.localhost:3000`
+              }
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "mt-4",
+              )}
+            >
+              Chat with our Demo AI
+            </Link>
+          </div>
         </div>
       </section>
     </>
