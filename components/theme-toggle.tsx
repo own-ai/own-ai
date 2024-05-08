@@ -1,10 +1,10 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import { IconMoon, IconSun } from "@/components/ui/icons";
 import { useMounted } from "@/lib/hooks/use-mounted";
 
 export function ThemeToggle() {
@@ -29,9 +29,9 @@ export function ThemeToggle() {
       title="Toggle theme"
     >
       {theme === "dark" ? (
-        <IconMoon className="transition-all" />
+        <Moon className="transition-all" width={18} />
       ) : (
-        <IconSun className="transition-all" />
+        <Sun className="transition-all" width={18} />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
