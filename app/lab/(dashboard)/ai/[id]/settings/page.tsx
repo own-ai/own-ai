@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import DeleteAiForm from "@/components/form/delete-ai-form";
-import { updateAi } from "@/lib/actions/app";
+import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";

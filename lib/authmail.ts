@@ -9,7 +9,7 @@ export async function sendVerificationRequest(
   const { identifier, provider, theme } = params;
   const headersList = headers();
   const host = headersList.get("host") ?? process.env.NEXT_PUBLIC_ROOT_DOMAIN!;
-  const hostDisplay = host.replace("app.", "");
+  const hostDisplay = host.replace("lab.", "");
 
   const url = new URL(params.url);
   url.host = host;

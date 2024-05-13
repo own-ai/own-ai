@@ -172,6 +172,7 @@ export const isValidSubdomain = (subdomain: string) => {
     "app",
     "pay",
     "bounce",
+    "lab",
   ];
   return !forbiddenSubdomains.includes(subdomain);
 };

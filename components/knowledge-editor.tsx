@@ -9,7 +9,7 @@ import { useDebouncedCallback } from "use-debounce";
 import Editor from "@/components/editor";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { updateKnowledge } from "@/lib/actions/app";
+import { updateKnowledge } from "@/lib/actions/lab";
 import { cn } from "@/lib/utils";
 
 type KnowledgeWithAi = Knowledge & {

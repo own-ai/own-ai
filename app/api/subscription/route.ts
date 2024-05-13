@@ -3,8 +3,8 @@ import { stripe } from "@/lib/stripe";
 import { getUserSubscriptionPlan, proPlan } from "@/lib/subscription";
 
 const billingUrl = process.env.NEXT_PUBLIC_VERCEL_ENV
-  ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/settings`
-  : `http://app.localhost:3000/settings`;
+  ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/settings`
+  : `http://lab.localhost:3000/settings`;
 
 export async function GET() {
   try {

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import Form from "@/components/form";
 import BillingForm from "@/components/form/billing-form";
-import { editUser } from "@/lib/actions/app";
+import { editUser } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 import { getUserSubscriptionPlan } from "@/lib/subscription";

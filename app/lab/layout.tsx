@@ -19,12 +19,12 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_VERCEL_ENV
-      ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-      : "http://app.localhost:3000",
+      ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+      : "http://lab.localhost:3000",
   ),
 };
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function LabLayout({ children }: { children: React.ReactNode }) {
   return (
     <Providers
       attribute="class"

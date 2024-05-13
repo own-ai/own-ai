@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
-import { deleteAi } from "@/lib/actions/app";
+import { deleteAi } from "@/lib/actions/lab";
 import { cn } from "@/lib/utils";
 
 export default function DeleteAiForm({ aiName }: { aiName: string }) {

@@ -18,7 +18,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 
-import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions/app";
+import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions/lab";
 
 const externalLinks: {
   label: string;

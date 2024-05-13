@@ -37,8 +37,8 @@ export default async function middleware(req: NextRequest) {
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
 
-  // rewrites for app pages
-  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+  // rewrites for lab pages
+  if (hostname == `lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     const session = await getToken({ req });
     if (!session && url.pathname !== "/login") {
       return NextResponse.redirect(new URL("/login", req.url));
@@ -46,7 +46,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.rewrite(
-      new URL(`/app${path === "/" ? "" : path}`, req.url),
+      new URL(`/lab${path === "/" ? "" : path}`, req.url),
     );
   }
 

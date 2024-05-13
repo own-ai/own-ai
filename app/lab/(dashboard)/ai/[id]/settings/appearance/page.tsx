@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import Form from "@/components/form";
-import { updateAi } from "@/lib/actions/app";
+import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 

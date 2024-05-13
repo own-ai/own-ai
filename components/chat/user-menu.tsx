@@ -18,7 +18,7 @@ import { PublicAiData } from "@/lib/types";
 export interface UserMenuProps {
   user: Session["user"] & { id?: string };
   ai: PublicAiData | null;
-  appBaseUrl: string;
+  labBaseUrl: string;
 }
 
 function getUserInitials(name: string) {
@@ -26,7 +26,7 @@ function getUserInitials(name: string) {
   return lastName ? `${firstName[0]}${lastName[0]}` : firstName.slice(0, 2);
 }
 
-export function UserMenu({ user, ai, appBaseUrl }: UserMenuProps) {
+export function UserMenu({ user, ai, labBaseUrl }: UserMenuProps) {
   const label = user?.name ?? user?.email;
   return (
     <div className="flex items-center justify-between">
@@ -58,7 +58,7 @@ export function UserMenu({ user, ai, appBaseUrl }: UserMenuProps) {
           {ai && ai.userId === user?.id ? (
             <DropdownMenuItem asChild>
               <a
-                href={`${appBaseUrl}/ai/${ai.id}`}
+                href={`${labBaseUrl}/ai/${ai.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-between text-xs"

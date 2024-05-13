@@ -46,10 +46,10 @@ async function UserOrLogin({ ai }: { ai: PublicAiData | null }) {
       <UserMenu
         user={session.user}
         ai={ai}
-        appBaseUrl={
+        labBaseUrl={
           process.env.NEXT_PUBLIC_VERCEL_ENV
-            ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-            : `http://app.localhost:3000`
+            ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+            : `http://lab.localhost:3000`
         }
       />
     );
@@ -57,11 +57,11 @@ async function UserOrLogin({ ai }: { ai: PublicAiData | null }) {
 
   let loginUrl = "/login";
 
-  // For demo, the Login link should lead to App login – users try to sign up to ownAI here
+  // For demo, the Login link should lead to Lab login – users try to sign up to ownAI here
   if (ai?.subdomain === "demo") {
     loginUrl = process.env.NEXT_PUBLIC_VERCEL_ENV
-      ? `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/login`
-      : `http://app.localhost:3000/login`;
+      ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/login`
+      : `http://lab.localhost:3000/login`;
   }
 
   return (

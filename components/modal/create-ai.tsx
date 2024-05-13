@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
-import { createAi } from "@/lib/actions/app";
+import { createAi } from "@/lib/actions/lab";
 import { slugify } from "@/lib/domains";
 import { UserSubscriptionPlan } from "@/lib/types";
 import { cn } from "@/lib/utils";
