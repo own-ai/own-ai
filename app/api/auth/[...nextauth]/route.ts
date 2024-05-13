@@ -5,12 +5,12 @@ import { authOptions } from "@/lib/auth";
 
 // Handler for custom domains.
 // We don't set the cookie domain to avoid it being rejected.
-const theirHandler = NextAuth(authOptions);
+const customDomainHandler = NextAuth(authOptions);
 
-// If the user signs in to ownai.com or any subdomain.ownai.com,
+// If the user signs in to the root domain or any of its subdomains,
 // set the cookie domain in order to apply it and the login state to all subdomains.
 // This allows the user to sign in only once for all subdomains.
-const ourHandler = NextAuth({
+const rootDomainHandler = NextAuth({
   ...authOptions,
   cookies: {
     ...authOptions.cookies,
@@ -35,10 +35,10 @@ function handle(...args: any[]) {
     host === process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
     host?.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
   ) {
-    return ourHandler(...args);
+    return rootDomainHandler(...args);
   }
 
-  return theirHandler(...args);
+  return customDomainHandler(...args);
 }
 
 export { handle as GET, handle as POST };

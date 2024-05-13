@@ -48,7 +48,7 @@ export default function ReportAbuse() {
 
           <div>
             <label
-              htmlFor="domain"
+              htmlFor="url"
               className="block text-sm font-medium leading-6 text-stone-900"
             >
               URL to report

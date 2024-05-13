@@ -50,6 +50,6 @@ export default async function middleware(req: NextRequest) {
     );
   }
 
-  // rewrite everything else to /domain/[domain]/ dynamic route
-  return NextResponse.rewrite(new URL(`/domain/${hostname}${path}`, req.url));
+  // rewrite everything else to /ai/[domain]/ dynamic route
+  return NextResponse.rewrite(new URL(`/ai/${hostname}${path}`, req.url));
 }

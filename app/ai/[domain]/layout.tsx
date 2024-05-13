@@ -46,15 +46,12 @@ export const viewport = {
   ],
 };
 
-interface DomainLayoutProps {
+interface AiLayoutProps {
   params: { domain: string };
   children: React.ReactNode;
 }
 
-export default async function DomainLayout({
-  params,
-  children,
-}: DomainLayoutProps) {
+export default async function AiLayout({ params, children }: AiLayoutProps) {
   const domain = decodeURIComponent(params.domain);
   const ai = await getPublicAiData(domain);
 
