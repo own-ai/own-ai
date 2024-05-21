@@ -4,6 +4,7 @@ import CreateKnowledgeButton from "@/components/create-knowledge-button";
 import KnowledgeCard from "@/components/knowledge-card";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { labPath } from "@/lib/urls";
 
 export default async function Knowledges({
   aiId,
@@ -16,7 +17,7 @@ export default async function Knowledges({
 }) {
   const session = await getSession();
   if (!session?.user) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
   const knowledges =
     aiId || userId

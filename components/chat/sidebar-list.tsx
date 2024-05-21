@@ -38,7 +38,7 @@ export function SidebarList({ userId, aiId }: SidebarListProps) {
       </div>
       <div className="flex items-center justify-between p-4">
         <ThemeToggle />
-        {chats?.length > 3 ? (
+        {aiId && chats?.length > 3 ? (
           <ClearHistory
             clearChats={clearChats}
             isEnabled={chats?.length > 0}

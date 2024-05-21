@@ -6,6 +6,7 @@ import { useTransition } from "react";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { createKnowledge } from "@/lib/actions/lab";
+import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 export default function CreateKnowledgeButton() {
@@ -20,7 +21,7 @@ export default function CreateKnowledgeButton() {
           const knowledge = await createKnowledge(null, id, null);
           va.track("Created Knowledge");
           router.refresh();
-          router.push(`/knowledge/${knowledge.id}`);
+          router.push(labPath(`/knowledge/${knowledge.id}`));
         })
       }
       className={cn(

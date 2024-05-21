@@ -1,6 +1,8 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isSubdomainMode, labPath } from "./lib/urls";
+
 export const config = {
   matcher: [
     /*
@@ -38,16 +40,27 @@ export default async function middleware(req: NextRequest) {
   }`;
 
   // rewrites for lab pages
-  if (hostname == `lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+  if (
+    (isSubdomainMode() &&
+      hostname == `lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) ||
+    (!isSubdomainMode() && path.startsWith("/lab"))
+  ) {
     const session = await getToken({ req });
-    if (!session && url.pathname !== "/login") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    } else if (session && url.pathname == "/login") {
-      return NextResponse.redirect(new URL("/", req.url));
+    if (!session && url.pathname !== labPath("/login")) {
+      return NextResponse.redirect(new URL(labPath("/login"), req.url));
+    } else if (session && url.pathname == labPath("/login")) {
+      return NextResponse.redirect(new URL(labPath("/"), req.url));
     }
     return NextResponse.rewrite(
-      new URL(`/lab${path === "/" ? "" : path}`, req.url),
+      new URL(
+        `${isSubdomainMode() ? "/lab" : ""}${path === "/" ? "" : path}`,
+        req.url,
+      ),
     );
+  }
+
+  if (!isSubdomainMode() && path.startsWith("/ai/")) {
+    return NextResponse.next();
   }
 
   // rewrite everything else to /ai/[domain]/ dynamic route

@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 
 export default function ReportAbuse() {
   const [open, setOpen] = useState(false);
-  const { domain } = useParams() as { domain: string };
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
   const url = `https://${domain}`;
 
   return (

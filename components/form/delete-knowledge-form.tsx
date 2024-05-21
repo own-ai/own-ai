@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { deleteKnowledge } from "@/lib/actions/lab";
+import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 export default function DeleteKnowledgeForm({ id }: { id: string }) {
@@ -21,7 +22,7 @@ export default function DeleteKnowledgeForm({ id }: { id: string }) {
           } else {
             va.track("Deleted Knowledge");
             router.refresh();
-            router.push(`/ai/${res.aiId}`);
+            router.push(labPath(`/ai/${res.aiId}`));
             toast.success(`Successfully deleted the knowledge.`);
           }
         })

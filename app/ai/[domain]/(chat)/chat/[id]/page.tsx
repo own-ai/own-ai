@@ -6,6 +6,7 @@ import { AI } from "@/lib/actions/ai";
 import { getChat } from "@/lib/actions/chat";
 import { getSession } from "@/lib/auth";
 import { getAiData } from "@/lib/fetchers";
+import { aiPath } from "@/lib/urls";
 
 export const maxDuration = 60;
 
@@ -32,12 +33,13 @@ export async function generateMetadata({
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
+  const domain = decodeURIComponent(params.domain);
+
   const session = await getSession();
   if (!session?.user) {
-    redirect("/login");
+    redirect(aiPath(domain, "/login"));
   }
 
-  const domain = decodeURIComponent(params.domain);
   const ai = await getAiData(domain);
   if (!ai) {
     notFound();
@@ -56,7 +58,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
     <AI
       initialAIState={{ aiId: ai.id, chatId: chat.id, messages: chat.messages }}
     >
-      <Chat id={chat.id} session={session} />
+      <Chat domain={domain} id={chat.id} session={session} />
     </AI>
   );
 }

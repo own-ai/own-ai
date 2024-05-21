@@ -10,6 +10,7 @@ import Editor from "@/components/editor";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { updateKnowledge } from "@/lib/actions/lab";
+import { getAiUrlDisplay, getAiUrlHref } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 type KnowledgeWithAi = Knowledge & {
@@ -28,9 +29,6 @@ export default function KnowledgeEditor({
   let [isPendingSaving, startTransitionSaving] = useTransition();
   let [isPendingLearning, startTransitionLearning] = useTransition();
   const [data, setData] = useState<KnowledgeWithAi>(knowledge);
-  const aiUrl =
-    data.ai?.ownDomain ??
-    `${data.ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   const saveChanges = useCallback(() => {
     if (data.title === knowledge.title && data.content === knowledge.content) {
@@ -74,16 +72,12 @@ export default function KnowledgeEditor({
                 I have learned this knowledge. You can talk with me about it by
                 visiting my URL{" "}
                 <a
-                  href={
-                    process.env.NEXT_PUBLIC_VERCEL_ENV
-                      ? `https://${aiUrl}`
-                      : `http://${data.ai?.subdomain}.localhost:3000`
-                  }
+                  href={getAiUrlHref(data.ai!)}
                   target="_blank"
                   rel="noreferrer"
                   className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
                 >
-                  {aiUrl} ↗
+                  {getAiUrlDisplay(data.ai!)} ↗
                 </a>
               </p>
             ) : (

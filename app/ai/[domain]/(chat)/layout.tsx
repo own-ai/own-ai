@@ -15,7 +15,7 @@ export default async function ChatLayout({
 
   return (
     <div className="relative flex h-[calc(100vh_-_theme(spacing.16))] overflow-hidden">
-      <SidebarDesktop aiId={ai?.id} />
+      {ai ? <SidebarDesktop domain={domain} aiId={ai.id} /> : null}
       {children}
     </div>
   );

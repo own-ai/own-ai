@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 
+import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 export default function AiSettingsNav({
@@ -17,17 +18,17 @@ export default function AiSettingsNav({
   const navItems = [
     {
       name: "General",
-      href: `/ai/${id}/settings`,
+      href: labPath(`/ai/${id}/settings`),
       segment: null,
     },
     {
       name: "Domains",
-      href: `/ai/${id}/settings/domains`,
+      href: labPath(`/ai/${id}/settings/domains`),
       segment: "domains",
     },
     {
       name: "Appearance",
-      href: `/ai/${id}/settings/appearance`,
+      href: labPath(`/ai/${id}/settings/appearance`),
       segment: "appearance",
     },
   ];
@@ -35,7 +36,7 @@ export default function AiSettingsNav({
   if (isTeamAi) {
     navItems.push({
       name: "Team",
-      href: `/ai/${id}/settings/team`,
+      href: labPath(`/ai/${id}/settings/team`),
       segment: "team",
     });
   }

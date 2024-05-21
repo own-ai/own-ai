@@ -2,7 +2,7 @@
 
 import { useActions, useUIState } from "ai/rsc";
 import { nanoid } from "nanoid";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import * as React from "react";
 import Textarea from "react-textarea-autosize";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { type AI } from "@/lib/actions/ai";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { aiPath } from "@/lib/urls";
 
 export function PromptForm({
   input,
@@ -26,6 +27,9 @@ export function PromptForm({
   setInput: (value: string) => void;
 }) {
   const router = useRouter();
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
+
   const { formRef, onKeyDown } = useEnterSubmit();
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const { submitUserMessage } = useActions();
@@ -81,7 +85,7 @@ export function PromptForm({
               size="icon"
               className="absolute left-0 top-[14px] size-8 rounded-full bg-background p-0 sm:left-4"
               onClick={() => {
-                router.push("/new");
+                router.push(aiPath(domain, "/new"));
               }}
             >
               <IconPlus />

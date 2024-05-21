@@ -7,11 +7,12 @@ import OverviewAisCTA from "@/components/overview-ais-cta";
 import PlaceholderCard from "@/components/placeholder-card";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { labPath } from "@/lib/urls";
 
 export default async function Overview() {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const hasKnowledge = !!(await prisma.knowledge.count({

@@ -11,6 +11,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { createAi } from "@/lib/actions/lab";
 import { slugify } from "@/lib/domains";
 import { UserSubscriptionPlan } from "@/lib/types";
+import { isSubdomainMode, labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 import { useModal } from "./provider";
@@ -49,7 +50,7 @@ export default function CreateAiModal({
             va.track("Created AI");
             const { id } = res;
             router.refresh();
-            router.push(`/ai/${id}`);
+            router.push(labPath(`/ai/${id}`));
             modal?.hide();
             toast.success(`Successfully created the AI.`);
           }
@@ -66,7 +67,7 @@ export default function CreateAiModal({
           <p className="text-sm text-stone-500 dark:text-stone-400">
             You can have up to 3 AIs for free.{" "}
             <Link
-              href="/settings"
+              href={labPath("/settings")}
               onClick={() => {
                 modal?.hide();
               }}
@@ -106,9 +107,14 @@ export default function CreateAiModal({
                 htmlFor="subdomain"
                 className="text-sm font-medium text-stone-500"
               >
-                Domain (URL for your AI)
+                URL for your AI
               </label>
               <div className="flex w-full max-w-md">
+                {isSubdomainMode() ? null : (
+                  <div className="flex items-center whitespace-nowrap rounded-l-lg border border-r-0 border-stone-200 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
+                    {process.env.NEXT_PUBLIC_ROOT_DOMAIN}/ai/
+                  </div>
+                )}
                 <input
                   name="subdomain"
                   type="text"
@@ -119,11 +125,15 @@ export default function CreateAiModal({
                   autoCapitalize="off"
                   maxLength={32}
                   required
-                  className="w-full rounded-l-lg border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
+                  className={`w-full rounded-${
+                    isSubdomainMode() ? "l" : "r"
+                  }-lg border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white`}
                 />
-                <div className="flex items-center rounded-r-lg border border-l-0 border-stone-200 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
-                  .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
-                </div>
+                {isSubdomainMode() ? (
+                  <div className="flex items-center rounded-r-lg border border-l-0 border-stone-200 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
+                    .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-col space-y-2">
@@ -190,7 +200,7 @@ export default function CreateAiModal({
             onClick={(event) => {
               event.preventDefault();
               modal?.hide();
-              router.push("/settings");
+              router.push(labPath("/settings"));
             }}
           >
             <p>Upgrade to PRO</p>

@@ -6,6 +6,7 @@ import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { labPath } from "@/lib/urls";
 
 export default async function AiSettingsIndex({
   params,
@@ -14,7 +15,7 @@ export default async function AiSettingsIndex({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);

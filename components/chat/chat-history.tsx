@@ -4,19 +4,21 @@ import * as React from "react";
 import { SidebarList } from "@/components/chat/sidebar-list";
 import { buttonVariants } from "@/components/ui/button";
 import { IconPlus } from "@/components/ui/icons";
+import { aiPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 interface ChatHistoryProps {
-  userId?: string;
-  aiId?: string;
+  domain: string;
+  userId: string;
+  aiId: string;
 }
 
-export async function ChatHistory({ userId, aiId }: ChatHistoryProps) {
+export function ChatHistory({ domain, userId, aiId }: ChatHistoryProps) {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-4 mt-12 px-2 lg:mt-4">
         <Link
-          href="/"
+          href={aiPath(domain, "/new")}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "h-10 w-full justify-start bg-zinc-50 px-4 shadow-none transition-colors hover:bg-zinc-200/40 dark:bg-zinc-900 dark:hover:bg-zinc-300/10",

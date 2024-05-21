@@ -5,6 +5,7 @@ import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { getAiUrlDisplay, labPath } from "@/lib/urls";
 
 export default async function AiSettingsTeam({
   params,
@@ -13,7 +14,7 @@ export default async function AiSettingsTeam({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
@@ -28,14 +29,13 @@ export default async function AiSettingsTeam({
     notFound();
   }
 
-  const url =
-    ai?.ownDomain ?? `${ai?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-
   return (
     <div className="flex flex-col space-y-6">
       <Form
         title="Team Members"
-        description={`Please enter the e-mail addresses of people who are allowed to access ${ai?.name}. People who are allowed to use the AI can do so by visiting the AI URL ${url}. People who are allowed to edit knowledge can do so by logging in to ownAI.`}
+        description={`Please enter the e-mail addresses of people who are allowed to access ${ai?.name}. People who are allowed to use the AI can do so by visiting the AI URL ${getAiUrlDisplay(
+          ai,
+        )}. People who are allowed to edit knowledge can do so by logging in to ownAI.`}
         helpText=""
         inputAttrs={{
           name: "members",

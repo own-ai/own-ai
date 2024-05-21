@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Editor from "@/components/editor";
 import LoadingDots from "@/components/icons/loading-dots";
 import type { AiMember, ConversationStarter } from "@/lib/types";
+import { isSubdomainMode, labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 import ConversationStartersConfiguration from "./conversation-starters-configuration";
@@ -152,7 +153,7 @@ export default function Form({
               <div className="text-sm text-stone-500 dark:text-stone-400">
                 Please go to the{" "}
                 <Link
-                  href={`/ai/${id}/settings/team`}
+                  href={labPath(`/ai/${id}/settings/team`)}
                   className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
                 >
                   Team tab
@@ -175,14 +176,29 @@ export default function Form({
           </select>
         ) : inputAttrs.name === "subdomain" ? (
           <div className="flex w-full max-w-md">
-            <input
-              {...inputAttrs}
-              required
-              className="z-10 flex-1 rounded-l-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
-            />
-            <div className="flex items-center rounded-r-md border border-l-0 border-stone-300 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
-              .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
-            </div>
+            {isSubdomainMode() ? (
+              <>
+                <input
+                  {...inputAttrs}
+                  required
+                  className="z-10 flex-1 rounded-l-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+                />
+                <div className="flex items-center rounded-r-md border border-l-0 border-stone-300 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
+                  .{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center rounded-l-md border border-r-0 border-stone-300 bg-stone-100 px-3 text-sm dark:border-stone-600 dark:bg-stone-800 dark:text-stone-400">
+                  {process.env.NEXT_PUBLIC_ROOT_DOMAIN}/ai/
+                </div>
+                <input
+                  {...inputAttrs}
+                  required
+                  className="z-10 flex-1 rounded-r-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+                />
+              </>
+            )}
           </div>
         ) : inputAttrs.name === "ownDomain" ? (
           <>
@@ -260,7 +276,7 @@ export default function Form({
             className="flex h-8 w-32 items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800 sm:h-10"
             onClick={(event) => {
               event.preventDefault();
-              router.push("/settings");
+              router.push(labPath("/settings"));
             }}
           >
             <p>Upgrade to PRO</p>
@@ -270,7 +286,7 @@ export default function Form({
             className="flex h-8 w-32 items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800 sm:h-10"
             onClick={(event) => {
               event.preventDefault();
-              window.location.href = "mailto:info@ownai.com";
+              window.location.href = `mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL_ADDRESS}`;
             }}
           >
             <p>Contact us</p>

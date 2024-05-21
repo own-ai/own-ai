@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ReactNode, Suspense, useState } from "react";
 import { toast } from "sonner";
 
@@ -22,6 +22,8 @@ export default function LoginForm({
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
 
+  const pathname = usePathname();
+
   const submit = async () => {
     if (!email || loading) {
       return;
@@ -31,7 +33,7 @@ export default function LoginForm({
     const response = await signIn("email", {
       email,
       redirect: false,
-      callbackUrl: "/",
+      callbackUrl: pathname.replace(/login$/, ""),
     });
     setLoading(false);
     if (!response?.ok) {

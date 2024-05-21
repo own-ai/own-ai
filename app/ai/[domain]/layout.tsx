@@ -69,7 +69,7 @@ export default async function AiLayout({ params, children }: AiLayoutProps) {
         disableTransitionOnChange
       >
         <div className="flex min-h-screen flex-col">
-          <Header ai={ai} />
+          <Header domain={domain} ai={ai} />
           <main className="flex flex-1 flex-col bg-muted/50">{children}</main>
         </div>
         <TailwindIndicator />

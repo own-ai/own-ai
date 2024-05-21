@@ -19,6 +19,7 @@ import {
 import { ReactNode, useEffect, useMemo, useState } from "react";
 
 import { getAiIdFromKnowledgeId, getIsUserAiOwner } from "@/lib/actions/lab";
+import { labPath } from "@/lib/urls";
 
 const externalLinks: {
   label: string;
@@ -51,12 +52,12 @@ export default function Nav({ children }: { children: ReactNode }) {
       const items = [
         {
           name: "Back to your AIs",
-          href: "/ais",
+          href: labPath("/ais"),
           icon: <ArrowLeft width={18} />,
         },
         {
           name: "AI Knowledge",
-          href: `/ai/${id}`,
+          href: labPath(`/ai/${id}`),
           isActive: segments.length === 2,
           icon: <Newspaper width={18} />,
         },
@@ -64,7 +65,7 @@ export default function Nav({ children }: { children: ReactNode }) {
       if (isAiOwner) {
         items.push({
           name: "AI Settings",
-          href: `/ai/${id}/settings`,
+          href: labPath(`/ai/${id}/settings`),
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         });
@@ -74,18 +75,18 @@ export default function Nav({ children }: { children: ReactNode }) {
       return [
         {
           name: "Back to the AI",
-          href: aiId ? `/ai/${aiId}` : "/ais",
+          href: labPath(aiId ? `/ai/${aiId}` : "/ais"),
           icon: <ArrowLeft width={18} />,
         },
         {
           name: "Knowledge Editor",
-          href: `/knowledge/${id}`,
+          href: labPath(`/knowledge/${id}`),
           isActive: segments.length === 2,
           icon: <Edit3 width={18} />,
         },
         {
           name: "Knowledge Settings",
-          href: `/knowledge/${id}/settings`,
+          href: labPath(`/knowledge/${id}/settings`),
           isActive: segments.includes("settings"),
           icon: <Settings width={18} />,
         },
@@ -94,19 +95,19 @@ export default function Nav({ children }: { children: ReactNode }) {
     return [
       {
         name: "Overview",
-        href: "/",
+        href: labPath("/"),
         isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
       {
         name: "AIs",
-        href: "/ais",
+        href: labPath("/ais"),
         isActive: segments[0] === "ais",
         icon: <Bot width={18} />,
       },
       {
         name: "Settings",
-        href: "/settings",
+        href: labPath("/settings"),
         isActive: segments[0] === "settings",
         icon: <Settings width={18} />,
       },
@@ -143,7 +144,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg py-1.5">
             <Link
-              href="/"
+              href={labPath("/")}
               className="rounded-lg p-2 hover:bg-stone-200 dark:hover:bg-stone-700"
             >
               <Image

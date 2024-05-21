@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { deleteAi } from "@/lib/actions/lab";
+import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 export default function DeleteAiForm({ aiName }: { aiName: string }) {
@@ -24,7 +25,7 @@ export default function DeleteAiForm({ aiName }: { aiName: string }) {
             } else {
               va.track("Deleted AI");
               router.refresh();
-              router.push("/ais");
+              router.push(labPath("/ais"));
               toast.success(`Successfully deleted the AI.`);
             }
           })

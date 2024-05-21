@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import DeleteKnowledgeForm from "@/components/form/delete-knowledge-form";
 import { getMemberRole, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { labPath } from "@/lib/urls";
 
 export default async function KnowledgeSettings({
   params,
@@ -11,7 +12,7 @@ export default async function KnowledgeSettings({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
   const knowledge = await prisma.knowledge.findUnique({
     where: {

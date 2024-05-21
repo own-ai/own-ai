@@ -7,6 +7,7 @@ import Knowledges from "@/components/knowledges";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getMemberRole, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getAiUrlDisplay, getAiUrlHref, labPath } from "@/lib/urls";
 
 export default async function AiKnowledges({
   params,
@@ -15,7 +16,7 @@ export default async function AiKnowledges({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const ai = await prisma.ai.findUnique({
@@ -34,9 +35,6 @@ export default async function AiKnowledges({
     notFound();
   }
 
-  const url =
-    ai.ownDomain ?? `${ai.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-
   return (
     <>
       <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
@@ -54,16 +52,12 @@ export default async function AiKnowledges({
           <p>
             You can talk to me by visiting my URL{" "}
             <a
-              href={
-                process.env.NEXT_PUBLIC_VERCEL_ENV
-                  ? `https://${url}`
-                  : `http://${ai.subdomain}.localhost:3000`
-              }
+              href={getAiUrlHref(ai)}
               target="_blank"
               rel="noreferrer"
               className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
             >
-              {url} ↗
+              {getAiUrlDisplay(ai)} ↗
             </a>
             .{" "}
             {isTeacher ? (
@@ -72,7 +66,7 @@ export default async function AiKnowledges({
               <>
                 To change my behavior or appearance, please go to my{" "}
                 <Link
-                  href={`/ai/${params.id}/settings`}
+                  href={labPath(`/ai/${params.id}/settings`)}
                   className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
                 >
                   Settings

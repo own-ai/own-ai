@@ -13,6 +13,7 @@ import { formatDate } from "@/lib/utils";
 
 interface SharePageProps {
   params: {
+    domain: string;
     id: string;
   };
 }
@@ -28,6 +29,7 @@ export async function generateMetadata({
 }
 
 export default async function SharePage({ params }: SharePageProps) {
+  const domain = decodeURIComponent(params.domain);
   const chat = await getSharedChat(params.id);
 
   if (!chat || !chat?.sharePath) {
@@ -50,7 +52,7 @@ export default async function SharePage({ params }: SharePageProps) {
           </div>
         </div>
         <AI>
-          <ChatList messages={uiState} isShared={true} />
+          <ChatList messages={uiState} isShared={true} domain={domain} />
         </AI>
       </div>
       <FooterText className="py-8" />

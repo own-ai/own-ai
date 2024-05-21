@@ -5,6 +5,7 @@ import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { isSubdomainMode, labPath } from "@/lib/urls";
 
 export default async function AiSettingsDomains({
   params,
@@ -13,7 +14,7 @@ export default async function AiSettingsDomains({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
@@ -31,8 +32,12 @@ export default async function AiSettingsDomains({
   return (
     <div className="flex flex-col space-y-6">
       <Form
-        title="Subdomain"
-        description="The subdomain for your AI."
+        title={isSubdomainMode() ? "Subdomain" : "URL"}
+        description={
+          isSubdomainMode()
+            ? "The subdomain for your AI."
+            : "The URL for your AI."
+        }
         helpText="Please use 64 characters maximum."
         inputAttrs={{
           name: "subdomain",

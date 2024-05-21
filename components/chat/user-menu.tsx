@@ -3,6 +3,7 @@
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconExternalLink } from "@/components/ui/icons";
 import { PublicAiData } from "@/lib/types";
+import { aiPath, getLabUrlHref } from "@/lib/urls";
 
 export interface UserMenuProps {
   user: Session["user"] & { id?: string };
   ai: PublicAiData | null;
-  labBaseUrl: string;
 }
 
 function getUserInitials(name: string) {
@@ -26,7 +27,10 @@ function getUserInitials(name: string) {
   return lastName ? `${firstName[0]}${lastName[0]}` : firstName.slice(0, 2);
 }
 
-export function UserMenu({ user, ai, labBaseUrl }: UserMenuProps) {
+export function UserMenu({ user, ai }: UserMenuProps) {
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
+
   const label = user?.name ?? user?.email;
   return (
     <div className="flex items-center justify-between">
@@ -58,7 +62,7 @@ export function UserMenu({ user, ai, labBaseUrl }: UserMenuProps) {
           {ai && ai.userId === user?.id ? (
             <DropdownMenuItem asChild>
               <a
-                href={`${labBaseUrl}/ai/${ai.id}`}
+                href={`${getLabUrlHref()}/ai/${ai.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-between text-xs"
@@ -71,7 +75,7 @@ export function UserMenu({ user, ai, labBaseUrl }: UserMenuProps) {
           <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl: "/",
+                callbackUrl: aiPath(domain, "/"),
               })
             }
             className="text-xs"

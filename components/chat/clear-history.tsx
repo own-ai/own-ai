@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -18,11 +18,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { IconSpinner } from "@/components/ui/icons";
 import { ServerActionResult } from "@/lib/types";
+import { aiPath } from "@/lib/urls";
 
 interface ClearHistoryProps {
   isEnabled: boolean;
-  aiId?: string;
-  clearChats: (aiId?: string | null) => ServerActionResult<void>;
+  aiId: string;
+  clearChats: (aiId: string, aiRoot: string) => ServerActionResult<void>;
 }
 
 export function ClearHistory({
@@ -30,9 +31,11 @@ export function ClearHistory({
   aiId,
   clearChats,
 }: ClearHistoryProps) {
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
+
   const [open, setOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
-  const router = useRouter();
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -56,7 +59,8 @@ export function ClearHistory({
             onClick={(event) => {
               event.preventDefault();
               startTransition(async () => {
-                const result = await clearChats(aiId);
+                const aiRoot = aiPath(domain, "/");
+                const result = await clearChats(aiId, aiRoot);
                 if (result && "error" in result) {
                   toast.error(result.error);
                   return;

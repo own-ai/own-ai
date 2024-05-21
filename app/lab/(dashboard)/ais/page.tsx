@@ -8,11 +8,12 @@ import PlaceholderCard from "@/components/placeholder-card";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { labPath } from "@/lib/urls";
 
 export default async function AllAisPage() {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);

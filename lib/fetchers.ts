@@ -8,9 +8,11 @@ import { PublicAiData } from "@/lib/types";
 async function fetchAiData(
   domain: string,
 ): Promise<(Ai & { user: User | null }) | null> {
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
+  const subdomain =
+    domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) ||
+    !domain.includes(".")
+      ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+      : null;
 
   return await unstable_cache(
     async () => {

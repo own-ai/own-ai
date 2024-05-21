@@ -1,6 +1,7 @@
 "use client";
 
 import { type DialogProps } from "@radix-ui/react-dialog";
+import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -16,6 +17,7 @@ import {
 import { IconSpinner } from "@/components/ui/icons";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
 import { type Chat, ServerActionResult } from "@/lib/types";
+import { aiPath } from "@/lib/urls";
 
 interface ChatShareDialogProps extends DialogProps {
   chat: Pick<Chat, "id" | "title" | "messages">;
@@ -29,6 +31,9 @@ export function ChatShareDialog({
   onCopy,
   ...props
 }: ChatShareDialogProps) {
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
+
   const { copyToClipboard } = useCopyToClipboard({ timeout: 1000 });
   const [isSharePending, startShareTransition] = React.useTransition();
 
@@ -39,12 +44,12 @@ export function ChatShareDialog({
       }
 
       const url = new URL(window.location.href);
-      url.pathname = chat.sharePath;
+      url.pathname = aiPath(domain, chat.sharePath);
       copyToClipboard(url.toString());
       onCopy();
       toast.success("Share link copied to clipboard");
     },
-    [copyToClipboard, onCopy],
+    [copyToClipboard, onCopy, domain],
   );
 
   return (

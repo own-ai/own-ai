@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 import { type Chat } from "@/lib/types";
+import { aiPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
 interface SidebarItemProps {
@@ -24,8 +25,10 @@ interface SidebarItemProps {
 
 export function SidebarItem({ index, chat, children }: SidebarItemProps) {
   const pathname = usePathname();
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
 
-  const isActive = pathname === chat.path;
+  const isActive = pathname === aiPath(domain, chat.path);
   const [newChatId, setNewChatId] = useLocalStorage("newChatId", null);
   const shouldAnimate = index === 0 && isActive && newChatId;
 
@@ -67,7 +70,7 @@ export function SidebarItem({ index, chat, children }: SidebarItemProps) {
         )}
       </div>
       <Link
-        href={chat.path}
+        href={aiPath(domain, chat.path)}
         className={cn(
           buttonVariants({ variant: "ghost" }),
           "group w-full px-8 transition-colors hover:bg-zinc-200/40 dark:hover:bg-zinc-300/10",

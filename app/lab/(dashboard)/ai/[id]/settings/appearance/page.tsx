@@ -4,6 +4,7 @@ import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { labPath } from "@/lib/urls";
 
 export default async function AiSettingsAppearance({
   params,
@@ -12,7 +13,7 @@ export default async function AiSettingsAppearance({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const data = await prisma.ai.findUnique({

@@ -1,6 +1,8 @@
 import { Ai, Knowledge } from "@prisma/client";
 import Link from "next/link";
 
+import { labPath } from "@/lib/urls";
+
 export default function KnowledgeCard({
   data,
 }: {
@@ -9,7 +11,7 @@ export default function KnowledgeCard({
   return (
     <div className="relative rounded-lg border border-stone-200 shadow-md transition-all hover:shadow-lg dark:border-stone-700 dark:hover:border-white">
       <Link
-        href={`/knowledge/${data.id}`}
+        href={labPath(`/knowledge/${data.id}`)}
         className="flex flex-col overflow-hidden rounded-lg"
       >
         <div className="min-h-[108px] border-t border-stone-200 p-4 dark:border-stone-700">

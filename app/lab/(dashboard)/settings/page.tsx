@@ -6,11 +6,12 @@ import { editUser } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { labPath } from "@/lib/urls";
 
 export default async function SettingsPage() {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
 
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);

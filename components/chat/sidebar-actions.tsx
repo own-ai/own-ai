@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -23,10 +23,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { type Chat, ServerActionResult } from "@/lib/types";
+import { aiPath } from "@/lib/urls";
 
 interface SidebarActionsProps {
   chat: Chat;
-  removeChat: (args: { id: string; path: string }) => ServerActionResult<void>;
+  removeChat: (args: {
+    id: string;
+    aiRoot: string;
+    aiPath: string;
+  }) => ServerActionResult<void>;
   shareChat: (id: string) => ServerActionResult<Chat>;
 }
 
@@ -36,6 +41,9 @@ export function SidebarActions({
   shareChat,
 }: SidebarActionsProps) {
   const router = useRouter();
+  const params = useParams() as { domain: string };
+  const domain = decodeURIComponent(params.domain);
+
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false);
   const [isRemovePending, startRemoveTransition] = React.useTransition();
@@ -98,7 +106,8 @@ export function SidebarActions({
                 startRemoveTransition(async () => {
                   const result = await removeChat({
                     id: chat.id,
-                    path: chat.path,
+                    aiRoot: aiPath(domain, "/"),
+                    aiPath: aiPath(domain, chat.path),
                   });
 
                   if (result && "error" in result) {
@@ -108,7 +117,7 @@ export function SidebarActions({
 
                   setDeleteDialogOpen(false);
                   router.refresh();
-                  router.push("/");
+                  router.push(aiPath(domain, "/"));
                   toast.success("Chat deleted");
                 });
               }}

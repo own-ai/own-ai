@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth";
 import { getAiData } from "@/lib/fetchers";
 import { getMdxSource } from "@/lib/mdx";
 import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { aiPath, isSubdomainMode } from "@/lib/urls";
 import { nanoid } from "@/lib/utils";
 
 export const maxDuration = 60;
@@ -38,18 +39,23 @@ export default async function IndexPage({
         </div>
       );
     } else {
-      redirect("/login");
+      redirect(aiPath(domain, "/login"));
     }
   }
 
   // Check if the AI owner still has a PRO subscription for own domains.
-  if (!domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)) {
+  if (
+    domain.includes(".") &&
+    !domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+  ) {
     const subscriptionPlan = ai.userId
       ? await getUserSubscriptionPlan(ai.userId)
       : null;
     if (!subscriptionPlan?.isPro) {
       redirect(
-        `https://${ai.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+        isSubdomainMode()
+          ? `https://${ai.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+          : `https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/ai/${ai.subdomain}`,
       );
     }
   }
@@ -59,6 +65,7 @@ export default async function IndexPage({
   return (
     <AI initialAIState={{ aiId: ai.id, chatId: id, messages: [] }}>
       <Chat
+        domain={domain}
         id={id}
         session={session}
         welcome={welcome}

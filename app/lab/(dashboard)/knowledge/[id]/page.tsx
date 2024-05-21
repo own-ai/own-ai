@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Editor from "@/components/knowledge-editor";
 import { getMemberRole, getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { labPath } from "@/lib/urls";
 
 export default async function KnowledgePage({
   params,
@@ -11,7 +12,7 @@ export default async function KnowledgePage({
 }) {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect(labPath("/login"));
   }
   const knowledge = await prisma.knowledge.findUnique({
     where: {

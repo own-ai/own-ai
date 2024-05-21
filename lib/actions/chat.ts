@@ -46,7 +46,15 @@ export async function getChat(id: string, userId: string) {
   return chat;
 }
 
-export async function removeChat({ id, path }: { id: string; path: string }) {
+export async function removeChat({
+  id,
+  aiRoot,
+  aiPath,
+}: {
+  id: string;
+  aiRoot: string;
+  aiPath: string;
+}) {
   const session = await getSession();
 
   if (!session) {
@@ -68,11 +76,11 @@ export async function removeChat({ id, path }: { id: string; path: string }) {
   await kv.del(`chat:${id}`);
   await kv.zrem(`user:${session.user.id}:ai:${aiId}`, `chat:${id}`);
 
-  revalidatePath("/");
-  return revalidatePath(path);
+  revalidatePath(aiRoot);
+  return revalidatePath(aiPath);
 }
 
-export async function clearChats(aiId?: string | null) {
+export async function clearChats(aiId: string, aiRoot: string) {
   if (!aiId) {
     return;
   }
@@ -91,7 +99,7 @@ export async function clearChats(aiId?: string | null) {
     -1,
   );
   if (!chats.length) {
-    return redirect("/");
+    return redirect(aiRoot);
   }
   const pipeline = kv.pipeline();
 
@@ -102,8 +110,8 @@ export async function clearChats(aiId?: string | null) {
 
   await pipeline.exec();
 
-  revalidatePath("/");
-  return redirect("/");
+  revalidatePath(aiRoot);
+  return redirect(aiRoot);
 }
 
 export async function getSharedChat(id: string) {
