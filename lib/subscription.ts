@@ -11,6 +11,13 @@ export const proPlan: SubscriptionPlan = {
   stripePriceId: process.env.STRIPE_PRO_MONTHLY_PLAN_ID || null,
 };
 
+export function isSubscriptionMode() {
+  return (
+    process.env.NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS === "1" ||
+    process.env.NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS === "true"
+  );
+}
+
 export async function getUserSubscriptionPlan(
   userId: string,
 ): Promise<UserSubscriptionPlan> {

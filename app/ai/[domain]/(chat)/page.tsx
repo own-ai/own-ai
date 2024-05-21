@@ -7,7 +7,10 @@ import { AI } from "@/lib/actions/ai";
 import { getSession } from "@/lib/auth";
 import { getAiData } from "@/lib/fetchers";
 import { getMdxSource } from "@/lib/mdx";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { aiPath, isSubdomainMode } from "@/lib/urls";
 import { nanoid } from "@/lib/utils";
 
@@ -45,6 +48,7 @@ export default async function IndexPage({
 
   // Check if the AI owner still has a PRO subscription for own domains.
   if (
+    isSubscriptionMode() &&
     domain.includes(".") &&
     !domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
   ) {

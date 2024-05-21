@@ -4,7 +4,10 @@ import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { getAiUrlDisplay, labPath } from "@/lib/urls";
 
 export default async function AiSettingsTeam({
@@ -44,7 +47,7 @@ export default async function AiSettingsTeam({
         }}
         handleSubmit={updateAi}
         hasPro={subscriptionPlan.isPro}
-        needsPro={true}
+        needsPro={isSubscriptionMode()}
       />
     </div>
   );

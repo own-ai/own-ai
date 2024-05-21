@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 import { createAi } from "@/lib/actions/lab";
 import { slugify } from "@/lib/domains";
+import { isSubscriptionMode } from "@/lib/subscription";
 import { UserSubscriptionPlan } from "@/lib/types";
 import { isSubdomainMode, labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
@@ -63,7 +64,7 @@ export default function CreateAiModal({
           Create your new AI
         </h2>
 
-        {subscriptionPlan.isPro ? null : (
+        {!isSubscriptionMode() || subscriptionPlan.isPro ? null : (
           <p className="text-sm text-stone-500 dark:text-stone-400">
             You can have up to 3 AIs for free.{" "}
             <Link
@@ -82,7 +83,9 @@ export default function CreateAiModal({
           </p>
         )}
 
-        {!subscriptionPlan.isPro && currentAiCount >= 3 ? null : (
+        {isSubscriptionMode() &&
+        !subscriptionPlan.isPro &&
+        currentAiCount >= 3 ? null : (
           <>
             <div className="flex flex-col space-y-2">
               <label
@@ -193,7 +196,8 @@ export default function CreateAiModal({
         )}
       </div>
       <div className="flex items-center justify-end rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 md:px-10">
-        {!subscriptionPlan.isPro &&
+        {isSubscriptionMode() &&
+        !subscriptionPlan.isPro &&
         (currentAiCount >= 3 || data.access === "members") ? (
           <button
             className="flex h-10 w-full items-center justify-center space-x-2 rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800"

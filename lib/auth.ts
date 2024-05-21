@@ -5,7 +5,10 @@ import EmailProvider from "next-auth/providers/email";
 
 import { sendVerificationRequest } from "@/lib/authmail";
 import prisma from "@/lib/prisma";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { type AiMemberRole, Session, isAiMember } from "@/lib/types";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
@@ -100,6 +103,10 @@ export async function canUseAi(ai: Ai, user?: { id: string; email: string }) {
     }
 
     if (ai.access === "members" && getMemberRole(ai, user.email)) {
+      if (!isSubscriptionMode()) {
+        return true;
+      }
+
       // Check if the PRO subscription is still active for Team AIs
       const subscriptionPlan = ai.userId
         ? await getUserSubscriptionPlan(ai.userId)

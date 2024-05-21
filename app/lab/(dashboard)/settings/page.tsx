@@ -5,7 +5,10 @@ import BillingForm from "@/components/form/billing-form";
 import { editUser } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { labPath } from "@/lib/urls";
 
 export default async function SettingsPage() {
@@ -18,7 +21,11 @@ export default async function SettingsPage() {
 
   // If the user has a PRO plan, check cancel status on Stripe.
   let isCanceled = false;
-  if (subscriptionPlan.isPro && subscriptionPlan.stripeSubscriptionId) {
+  if (
+    isSubscriptionMode() &&
+    subscriptionPlan.isPro &&
+    subscriptionPlan.stripeSubscriptionId
+  ) {
     const stripePlan = await stripe.subscriptions.retrieve(
       subscriptionPlan.stripeSubscriptionId,
     );
@@ -56,12 +63,14 @@ export default async function SettingsPage() {
           contactUs={true}
           handleSubmit={editUser}
         />
-        <BillingForm
-          subscriptionPlan={{
-            ...subscriptionPlan,
-            isCanceled,
-          }}
-        />
+        {isSubscriptionMode() ? (
+          <BillingForm
+            subscriptionPlan={{
+              ...subscriptionPlan,
+              isCanceled,
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 import Editor from "@/components/editor";
 import LoadingDots from "@/components/icons/loading-dots";
+import { isSubscriptionMode } from "@/lib/subscription";
 import type { AiMember, ConversationStarter } from "@/lib/types";
 import { isSubdomainMode, labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
@@ -142,7 +143,9 @@ export default function Form({
               defaultValue={inputAttrs.defaultValue}
               className="w-full max-w-md rounded-md border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
               onChange={(e) => {
-                setNeedsProState(e.target.value === "members");
+                setNeedsProState(
+                  isSubscriptionMode() && e.target.value === "members",
+                );
               }}
             >
               <option value="private">Private</option>

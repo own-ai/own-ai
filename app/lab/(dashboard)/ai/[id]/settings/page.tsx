@@ -5,7 +5,10 @@ import DeleteAiForm from "@/components/form/delete-ai-form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { labPath } from "@/lib/urls";
 
 export default async function AiSettingsIndex({
@@ -56,7 +59,7 @@ export default async function AiSettingsIndex({
         }}
         handleSubmit={updateAi}
         hasPro={subscriptionPlan.isPro}
-        needsPro={data?.access === "members"}
+        needsPro={isSubscriptionMode() && data?.access === "members"}
       />
 
       <Form

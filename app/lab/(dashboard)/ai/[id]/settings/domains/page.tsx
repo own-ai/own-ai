@@ -4,7 +4,10 @@ import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { isSubdomainMode, labPath } from "@/lib/urls";
 
 export default async function AiSettingsDomains({
@@ -59,7 +62,7 @@ export default async function AiSettingsDomains({
           placeholder: "e.g. yourai.com or ai.yourcompany.com",
         }}
         handleSubmit={updateAi}
-        needsPro={true}
+        needsPro={isSubscriptionMode()}
         hasPro={subscriptionPlan.isPro}
       />
     </div>

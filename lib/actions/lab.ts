@@ -18,7 +18,10 @@ import {
 import { generateEmbedding } from "@/lib/embeddings";
 import prisma from "@/lib/prisma";
 import { ratelimit } from "@/lib/ratelimit";
-import { getUserSubscriptionPlan } from "@/lib/subscription";
+import {
+  getUserSubscriptionPlan,
+  isSubscriptionMode,
+} from "@/lib/subscription";
 import { getBlurDataURL } from "@/lib/utils";
 
 const nanoid = customAlphabet(
@@ -34,16 +37,18 @@ export const createAi = async (formData: FormData) => {
     };
   }
 
-  const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
-  const aiCount = await prisma.ai.count({
-    where: {
-      userId: session.user.id,
-    },
-  });
-  if (!subscriptionPlan.isPro && aiCount >= 3) {
-    return {
-      error: "Please upgrade to PRO to have more than 3 AIs.",
-    };
+  if (isSubscriptionMode()) {
+    const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
+    const aiCount = await prisma.ai.count({
+      where: {
+        userId: session.user.id,
+      },
+    });
+    if (!subscriptionPlan.isPro && aiCount >= 3) {
+      return {
+        error: "Please upgrade to PRO to have more than 3 AIs.",
+      };
+    }
   }
 
   const name = formData.get("name") as string;
