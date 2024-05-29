@@ -1,8 +1,9 @@
 import { getSession } from "@/lib/auth";
+import { isDeployed } from "@/lib/environment";
 import { stripe } from "@/lib/stripe";
 import { getUserSubscriptionPlan, proPlan } from "@/lib/subscription";
 
-const billingUrl = process.env.NEXT_PUBLIC_VERCEL_ENV
+const billingUrl = isDeployed()
   ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/settings`
   : `http://lab.localhost:3000/settings`;
 

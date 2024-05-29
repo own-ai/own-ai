@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
+import { isVercel } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import {
   getUserSubscriptionPlan,
@@ -50,21 +51,23 @@ export default async function AiSettingsDomains({
         }}
         handleSubmit={updateAi}
       />
-      <Form
-        title="Own Domain"
-        description="Set your own domain for your AI! For example, this could be a subdomain of your company or a personal domain under which you want to run your AI."
-        inputAttrs={{
-          name: "ownDomain",
-          type: "text",
-          defaultValue: data?.ownDomain!,
-          maxLength: 200,
-          pattern: "^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$",
-          placeholder: "e.g. yourai.com or ai.yourcompany.com",
-        }}
-        handleSubmit={updateAi}
-        needsPro={isSubscriptionMode()}
-        hasPro={subscriptionPlan.isPro}
-      />
+      {isVercel() ? (
+        <Form
+          title="Own Domain"
+          description="Set your own domain for your AI! For example, this could be a subdomain of your company or a personal domain under which you want to run your AI."
+          inputAttrs={{
+            name: "ownDomain",
+            type: "text",
+            defaultValue: data?.ownDomain!,
+            maxLength: 200,
+            pattern: "^[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$",
+            placeholder: "e.g. yourai.com or ai.yourcompany.com",
+          }}
+          handleSubmit={updateAi}
+          needsPro={isSubscriptionMode()}
+          hasPro={subscriptionPlan.isPro}
+        />
+      ) : null}
     </div>
   );
 }

@@ -16,6 +16,7 @@ import {
   validDomainRegex,
 } from "@/lib/domains";
 import { generateEmbedding } from "@/lib/embeddings";
+import { isImageUploadEnabled } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { ratelimit } from "@/lib/ratelimit";
 import {
@@ -188,9 +189,9 @@ export const updateAi = withAiAuth(
           },
         });
       } else if (key === "image") {
-        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        if (!isImageUploadEnabled()) {
           return {
-            error: "Missing BLOB_READ_WRITE_TOKEN token.",
+            error: "Sorry, but uploading images is currently disabled.",
           };
         }
 

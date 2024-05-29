@@ -11,7 +11,7 @@ import {
 } from "@/lib/subscription";
 import { type AiMemberRole, Session, isAiMember } from "@/lib/types";
 
-const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
+import { isDeployed } from "./environment";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -36,12 +36,12 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   cookies: {
     sessionToken: {
-      name: `${VERCEL_DEPLOYMENT ? "__Secure-" : ""}next-auth.session-token`,
+      name: `${isDeployed() ? "__Secure-" : ""}next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: VERCEL_DEPLOYMENT,
+        secure: isDeployed(),
       },
     },
   },

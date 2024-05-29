@@ -1,3 +1,5 @@
+import { isDeployed } from "./environment";
+
 export function isSubdomainMode() {
   return (
     process.env.NEXT_PUBLIC_ENABLE_SUBDOMAINS === "1" ||
@@ -32,7 +34,7 @@ export function getAiUrlHref(ai: {
   ownDomain: string | null;
   subdomain: string | null;
 }) {
-  if (process.env.NEXT_PUBLIC_VERCEL_ENV) {
+  if (isDeployed()) {
     return `https://${getAiUrlDisplay(ai)}`;
   }
 
@@ -45,12 +47,12 @@ export function getAiUrlHref(ai: {
 
 export function getLabUrlHref() {
   if (isSubdomainMode()) {
-    return process.env.NEXT_PUBLIC_VERCEL_ENV
+    return isDeployed()
       ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
       : "http://lab.localhost:3000";
   }
 
-  return process.env.NEXT_PUBLIC_VERCEL_ENV
+  return isDeployed()
     ? `https://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/lab`
     : "http://localhost:3000/lab";
 }

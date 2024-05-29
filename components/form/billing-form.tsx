@@ -1,10 +1,10 @@
 "use client";
 
-import va from "@vercel/analytics";
 import * as React from "react";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
+import { reportEvent } from "@/lib/environment";
 import { UserSubscriptionPlan } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -24,7 +24,7 @@ export default function BillingForm({
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setIsLoading(true);
-    va.track(
+    reportEvent(
       subscriptionPlan.isPro ? "Opened Manage Subscription" : "Opened Checkout",
     );
 

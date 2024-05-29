@@ -2,16 +2,15 @@ import { put } from "@vercel/blob";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
+import { isImageUploadEnabled } from "@/lib/environment";
+
 export const runtime = "edge";
 
 export async function POST(req: Request) {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return new Response(
-      "Missing BLOB_READ_WRITE_TOKEN. Don't forget to add that to your .env file.",
-      {
-        status: 401,
-      },
-    );
+  if (!isImageUploadEnabled()) {
+    return new Response("Sorry, but uploading images is currently disabled.", {
+      status: 401,
+    });
   }
 
   const file = req.body || "";

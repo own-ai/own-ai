@@ -1,6 +1,5 @@
 "use client";
 
-import va from "@vercel/analytics";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 
 import Editor from "@/components/editor";
 import LoadingDots from "@/components/icons/loading-dots";
+import { reportEvent } from "@/lib/environment";
 import { isSubscriptionMode } from "@/lib/subscription";
 import type { AiMember, ConversationStarter } from "@/lib/types";
 import { isSubdomainMode, labPath } from "@/lib/urls";
@@ -113,7 +113,7 @@ export default function Form({
           if (res.error) {
             toast.error(res.error);
           } else {
-            va.track(`Updated ${inputAttrs.name}`, id ? { id } : {});
+            reportEvent(`Updated ${inputAttrs.name}`, id ? { id } : {});
             if (id) {
               router.refresh();
             } else {

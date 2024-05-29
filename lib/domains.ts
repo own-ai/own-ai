@@ -58,7 +58,7 @@ export const removeDomainFromVercelTeam = async (domain: string) => {
   ).then((res) => res.json());
 };
 
-export const getDomainResponse = async (
+export const getDomainResponseFromVercel = async (
   domain: string,
 ): Promise<DomainResponse & { error: { code: string; message: string } }> => {
   return await fetch(
@@ -79,7 +79,7 @@ export const getDomainResponse = async (
   });
 };
 
-export const getConfigResponse = async (
+export const getConfigResponseFromVercel = async (
   domain: string,
 ): Promise<DomainConfigResponse> => {
   return await fetch(
@@ -96,7 +96,7 @@ export const getConfigResponse = async (
   ).then((res) => res.json());
 };
 
-export const verifyDomain = async (
+export const verifyDomainForVercel = async (
   domain: string,
 ): Promise<DomainVerificationResponse> => {
   return await fetch(

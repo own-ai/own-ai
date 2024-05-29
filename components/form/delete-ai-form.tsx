@@ -1,12 +1,12 @@
 "use client";
 
-import va from "@vercel/analytics";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { deleteAi } from "@/lib/actions/lab";
+import { reportEvent } from "@/lib/environment";
 import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export default function DeleteAiForm({ aiName }: { aiName: string }) {
             if (res.error) {
               toast.error(res.error);
             } else {
-              va.track("Deleted AI");
+              reportEvent("Deleted AI");
               router.refresh();
               router.push(labPath("/ais"));
               toast.success(`Successfully deleted the AI.`);

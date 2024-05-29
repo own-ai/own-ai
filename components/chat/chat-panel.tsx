@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { IconShare } from "@/components/ui/icons";
 import type { AI } from "@/lib/actions/ai";
 import { shareChat } from "@/lib/actions/chat";
+import { reportEvent } from "@/lib/environment";
 import { ConversationStarter } from "@/lib/types";
 
 export interface ChatPanelProps {
@@ -68,6 +69,7 @@ export function ChatPanel({
                   ]);
 
                   try {
+                    reportEvent("Sent message to AI");
                     const responseMessage = await submitUserMessage(
                       example.message,
                     );

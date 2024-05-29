@@ -1,5 +1,6 @@
 import type { Viewport } from "next";
 
+import { EnvironmentScripts } from "@/lib/environment";
 import { cn } from "@/lib/utils";
 import { cal, inter } from "@/styles/fonts";
 import "@/styles/globals.css";
@@ -18,7 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(cal.variable, inter.variable)}>{children}</body>
+      <body className={cn(cal.variable, inter.variable)}>
+        {children}
+        <EnvironmentScripts />
+      </body>
     </html>
   );
 }

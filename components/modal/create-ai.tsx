@@ -1,6 +1,5 @@
 "use client";
 
-import va from "@vercel/analytics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 import { createAi } from "@/lib/actions/lab";
 import { slugify } from "@/lib/domains";
+import { reportEvent } from "@/lib/environment";
 import { isSubscriptionMode } from "@/lib/subscription";
 import { UserSubscriptionPlan } from "@/lib/types";
 import { isSubdomainMode, labPath } from "@/lib/urls";
@@ -48,7 +48,7 @@ export default function CreateAiModal({
           if (res.error) {
             toast.error(res.error);
           } else {
-            va.track("Created AI");
+            reportEvent("Created AI");
             const { id } = res;
             router.refresh();
             router.push(labPath(`/ai/${id}`));

@@ -1,8 +1,7 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
 
 import { Providers } from "@/components/providers";
+import { isDeployed } from "@/lib/environment";
 
 const title = "ownAI – Have your own AI";
 const description = "Have your own AI.";
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
     images: [image],
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_VERCEL_ENV
+    isDeployed()
       ? `https://lab.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
       : "http://lab.localhost:3000",
   ),
@@ -33,8 +32,6 @@ export default function LabLayout({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       {children}
-      <Analytics />
-      <SpeedInsights />
     </Providers>
   );
 }

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Form from "@/components/form";
 import { updateAi } from "@/lib/actions/lab";
 import { getSession } from "@/lib/auth";
+import { isImageUploadEnabled } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { labPath } from "@/lib/urls";
 
@@ -28,17 +29,19 @@ export default async function AiSettingsAppearance({
 
   return (
     <div className="flex flex-col space-y-6">
-      <Form
-        title="Image"
-        description="An image for your AI. Accepted formats: .png, .jpg, .jpeg. The image is displayed on the login page of your AI and is therefore visible even if the AI is not public."
-        helpText="Max file size 4 MB. Recommended size 1200x630."
-        inputAttrs={{
-          name: "image",
-          type: "file",
-          defaultValue: data?.image!,
-        }}
-        handleSubmit={updateAi}
-      />
+      {isImageUploadEnabled() ? (
+        <Form
+          title="Image"
+          description="An image for your AI. Accepted formats: .png, .jpg, .jpeg. The image is displayed on the login page of your AI and is therefore visible even if the AI is not public."
+          helpText="Max file size 4 MB. Recommended size 1200x630."
+          inputAttrs={{
+            name: "image",
+            type: "file",
+            defaultValue: data?.image!,
+          }}
+          handleSubmit={updateAi}
+        />
+      ) : null}
       <Form
         title="Welcome Message"
         description="This page is displayed when the AI has been opened and is waiting for input. You can add a welcome message here or instructions on how the AI works and what abilities it has."

@@ -1,11 +1,11 @@
 "use client";
 
-import va from "@vercel/analytics";
 import { useParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 import LoadingDots from "@/components/icons/loading-dots";
 import { createKnowledge } from "@/lib/actions/lab";
+import { reportEvent } from "@/lib/environment";
 import { labPath } from "@/lib/urls";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export default function CreateKnowledgeButton() {
       onClick={() =>
         startTransition(async () => {
           const knowledge = await createKnowledge(null, id, null);
-          va.track("Created Knowledge");
+          reportEvent("Created Knowledge");
           router.refresh();
           router.push(labPath(`/knowledge/${knowledge.id}`));
         })

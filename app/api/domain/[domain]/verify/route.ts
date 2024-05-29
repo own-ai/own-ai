@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 import {
-  getConfigResponse,
-  getDomainResponse,
-  verifyDomain,
+  getConfigResponseFromVercel,
+  getDomainResponseFromVercel,
+  verifyDomainForVercel,
 } from "@/lib/domains";
 import { DomainVerificationStatusProps } from "@/lib/types";
 
@@ -15,8 +15,8 @@ export async function GET(
   let status: DomainVerificationStatusProps = "Valid Configuration";
 
   const [domainJson, configJson] = await Promise.all([
-    getDomainResponse(domain),
-    getConfigResponse(domain),
+    getDomainResponseFromVercel(domain),
+    getConfigResponseFromVercel(domain),
   ]);
 
   if (domainJson?.error?.code === "not_found") {
@@ -30,7 +30,7 @@ export async function GET(
     // if domain is not verified, we try to verify now
   } else if (!domainJson.verified) {
     status = "Pending Verification";
-    const verificationJson = await verifyDomain(domain);
+    const verificationJson = await verifyDomainForVercel(domain);
 
     // domain was just verified
     if (verificationJson && verificationJson.verified) {

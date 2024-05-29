@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { type AI } from "@/lib/actions/ai";
+import { reportEvent } from "@/lib/environment";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import { aiPath } from "@/lib/urls";
 
@@ -67,6 +68,7 @@ export function PromptForm({
 
         // Submit and get response message
         try {
+          reportEvent("Sent message to AI");
           const responseMessage = await submitUserMessage(value);
           setMessages((currentMessages) => [
             ...currentMessages,

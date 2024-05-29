@@ -1,6 +1,5 @@
 "use client";
 
-import va from "@vercel/analytics";
 import { AlertTriangle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -8,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
+import { reportEvent } from "@/lib/environment";
 import { cn } from "@/lib/utils";
 
 export default function ReportAbuse() {
@@ -28,7 +28,7 @@ export default function ReportAbuse() {
         <form
           action={async (formData) => {
             const url = formData.get("url") as string;
-            va.track("Reported Abuse", { url });
+            reportEvent("Reported Abuse", { url });
             // artificial 1s delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setOpen(false);

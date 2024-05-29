@@ -26,6 +26,7 @@ export const InlineSnippet = ({
     </span>
   );
 };
+
 export default function DomainConfiguration({ domain }: { domain: string }) {
   const [recordType, setRecordType] = useState<"A" | "CNAME">("A");
 
@@ -89,7 +90,7 @@ export default function DomainConfiguration({ domain }: { domain: string }) {
             </div>
           </div>
           <p className="text-sm dark:text-stone-400">
-            Warning: if you are using this domain for another AI, setting this
+            Warning: If you are using this domain for another AI, setting this
             TXT record will transfer domain ownership away from that AI. Please
             exercise caution when setting this record.
           </p>
