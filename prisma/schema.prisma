@@ -17,6 +17,7 @@ model User {
   username      String?
   email         String?   @unique
   emailVerified DateTime?
+  passhash      String?
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -93,7 +94,7 @@ model Ai {
   id            String   @id @default(cuid())
   name          String?
   access        Access   @default(private)
-  model         String   @default("mistralai/Mixtral-8x7B-Instruct-v0.1")
+  model         String?
   instructions  String?  @db.Text
   welcome       String?  @db.Text
   starters      Json?

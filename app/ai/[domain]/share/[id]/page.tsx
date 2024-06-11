@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ChatList } from "@/components/chat/chat-list";
 import { FooterText } from "@/components/chat/footer";
-import { AI, UIState, getUIStateFromAIState } from "@/lib/actions/ai";
+import { AI, UIState, getUIStateFromMessages } from "@/lib/actions/ai";
 import { getSharedChat } from "@/lib/actions/chat";
 import { formatDate } from "@/lib/utils";
 
@@ -36,7 +36,7 @@ export default async function SharePage({ params }: SharePageProps) {
     notFound();
   }
 
-  const uiState: UIState = getUIStateFromAIState(chat);
+  const uiState: UIState = getUIStateFromMessages(chat.messages, chat.id);
 
   return (
     <>

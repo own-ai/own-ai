@@ -60,6 +60,13 @@ export const createAi = async (formData: FormData) => {
   // Use the first model as default
   const model = JSON.parse(process.env.AI_MODELS || "null")?.[0]?.key as string;
 
+  if (!model) {
+    return {
+      error:
+        "No AI models have been defined for this ownAI installation. Please ask your ownAI admin to set the environment variable AI_MODELS.",
+    };
+  }
+
   if (!isValidSubdomain(subdomain)) {
     return {
       error:

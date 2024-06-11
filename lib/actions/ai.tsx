@@ -42,6 +42,10 @@ async function submitUserMessage(content: string) {
     throw new Error("You are not authorized to use this AI.");
   }
 
+  if (!ai.model) {
+    throw new Error("No model has been set for this AI.");
+  }
+
   aiState.update({
     ...aiState.get(),
     messages: [
@@ -137,10 +141,10 @@ export const AI = createAI<AIState, UIState>({
       return;
     }
 
-    const aiState = getAIState();
+    const aiState = getAIState<typeof AI>();
 
     if (aiState) {
-      const uiState = getUIStateFromAIState(aiState);
+      const uiState = getUIStateFromMessages(aiState.messages, aiState.chatId);
       return uiState;
     }
   },
@@ -171,11 +175,14 @@ export const AI = createAI<AIState, UIState>({
   },
 });
 
-export const getUIStateFromAIState = (aiState: Chat) => {
-  return aiState.messages
+export const getUIStateFromMessages = (
+  messages: Message[],
+  chatId: string,
+): UIState => {
+  return messages
     .filter((message) => message.role !== "system")
-    .map((message, index) => ({
-      id: `${aiState.chatId}-${index}`,
+    .map((message) => ({
+      id: `${chatId}-${message.id}`,
       display:
         message.role === "user" ? (
           <UserMessage>{message.content}</UserMessage>

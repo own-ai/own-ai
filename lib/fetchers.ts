@@ -8,16 +8,26 @@ import { PublicAiData } from "@/lib/types";
 async function fetchAiData(
   domain: string,
 ): Promise<(Ai & { user: User | null }) | null> {
+  let where: { subdomain: string } | { ownDomain: string } = {
+    ownDomain: domain,
+  };
+
   const subdomain =
     domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) ||
     !domain.includes(".")
       ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
       : null;
 
+  if (subdomain) {
+    where = { subdomain };
+  } else if (domain === process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
+    where = { subdomain: "default" };
+  }
+
   return await unstable_cache(
     async () => {
       return prisma.ai.findUnique({
-        where: subdomain ? { subdomain } : { ownDomain: domain },
+        where,
         include: { user: true },
       });
     },

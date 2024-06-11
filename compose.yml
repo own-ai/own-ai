@@ -1,0 +1,110 @@
+name: ownai
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_USER: ownai
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ownai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:6.2
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  kv:
+    image: hiett/serverless-redis-http:0.0.10
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: ${SRH_TOKEN}
+      SRH_CONNECTION_STRING: redis://redis:6379
+    depends_on:
+      - redis
+    expose:
+      - "80"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    expose:
+      - "11434"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+  ownai:
+    image: ownai
+    pull_policy: build
+    build:
+      args:
+        NEXTAUTH_URL: ${NEXTAUTH_URL}
+        NEXT_PUBLIC_ROOT_DOMAIN: ${NEXT_PUBLIC_ROOT_DOMAIN}
+        POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
+        POSTGRES_URL_NON_POOLING: ${POSTGRES_URL_NON_POOLING}
+        BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN}
+        KV_URL: ${KV_URL}
+        KV_REST_API_URL: ${KV_REST_API_URL}
+        KV_REST_API_TOKEN: ${KV_REST_API_TOKEN}
+        KV_REST_API_READ_ONLY_TOKEN: ${KV_REST_API_READ_ONLY_TOKEN}
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+        EMAIL_SERVER_USER: ${EMAIL_SERVER_USER}
+        EMAIL_SERVER_PASSWORD: ${EMAIL_SERVER_PASSWORD}
+        EMAIL_SERVER_HOST: ${EMAIL_SERVER_HOST}
+        EMAIL_SERVER_PORT: ${EMAIL_SERVER_PORT}
+        EMAIL_FROM: ${EMAIL_FROM}
+        AUTH_BEARER_TOKEN: ${AUTH_BEARER_TOKEN}
+        PROJECT_ID_VERCEL: ${PROJECT_ID_VERCEL}
+        TEAM_ID_VERCEL: ${TEAM_ID_VERCEL}
+        AI_API_URL: ${AI_API_URL}
+        AI_API_KEY: ${AI_API_KEY}
+        AI_API_TYPE: ${AI_API_TYPE}
+        AI_MODELS: ${AI_MODELS}
+        EMBEDDINGS_API_URL: ${EMBEDDINGS_API_URL}
+        EMBEDDINGS_API_KEY: ${EMBEDDINGS_API_KEY}
+        EMBEDDINGS_API_MODEL: ${EMBEDDINGS_API_MODEL}
+        EMBEDDINGS_API_TYPE: ${EMBEDDINGS_API_TYPE}
+        STRIPE_API_KEY: ${STRIPE_API_KEY}
+        STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+        STRIPE_PRO_MONTHLY_PLAN_ID: ${STRIPE_PRO_MONTHLY_PLAN_ID}
+        NEXT_PUBLIC_EXTERNAL_LINKS: ${NEXT_PUBLIC_EXTERNAL_LINKS}
+        NEXT_PUBLIC_SUPPORT_EMAIL_ADDRESS: ${NEXT_PUBLIC_SUPPORT_EMAIL_ADDRESS}
+        NEXT_PUBLIC_ENABLE_SUBDOMAINS: ${NEXT_PUBLIC_ENABLE_SUBDOMAINS}
+        NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS: ${NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS}
+        NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS: ${NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS}
+        NEXT_PUBLIC_ENABLE_VERCEL_SPEED_INSIGHTS: ${NEXT_PUBLIC_ENABLE_VERCEL_SPEED_INSIGHTS}
+        NEXT_PUBLIC_ENABLE_LOCALHOST: ${NEXT_PUBLIC_ENABLE_LOCALHOST}
+    depends_on:
+      - postgres
+      - kv
+      - ollama
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_net
+    restart: unless-stopped
+
+volumes:
+  postgres_data: {}
+  redis_data: {}
+  ollama_data: {}
+
+networks:
+  internal_net: {}

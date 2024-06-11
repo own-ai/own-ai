@@ -23,4 +23,5 @@ module.exports = {
       { hostname: "ownai.com" },
     ],
   },
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
 };

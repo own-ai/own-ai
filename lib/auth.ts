@@ -1,6 +1,8 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { Ai } from "@prisma/client";
+import { compare } from "bcrypt";
 import { type NextAuthOptions, getServerSession } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 
 import { sendVerificationRequest } from "@/lib/authmail";
@@ -26,6 +28,28 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.EMAIL_FROM,
       sendVerificationRequest,
+    }),
+    CredentialsProvider({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
+
+        if (
+          user?.passhash &&
+          (await compare(credentials?.password || "", user.passhash))
+        ) {
+          return user;
+        }
+
+        return null;
+      },
     }),
   ],
   pages: {

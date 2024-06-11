@@ -2,8 +2,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAI } from "@ai-sdk/openai";
-
-import { createTogether } from "@/lib/together-provider";
+import { createOllama } from "ollama-ai-provider";
 
 export const aiProvider = (() => {
   switch (process.env.AI_API_TYPE) {
@@ -27,10 +26,9 @@ export const aiProvider = (() => {
         baseURL: process.env.AI_API_URL,
         apiKey: process.env.AI_API_KEY,
       });
-    case "together":
-      return createTogether({
+    case "ollama":
+      return createOllama({
         baseURL: process.env.AI_API_URL,
-        apiKey: process.env.AI_API_KEY,
       });
     default:
       throw new Error("AI_API_TYPE is not set or unknown.");

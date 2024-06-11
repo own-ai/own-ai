@@ -19,6 +19,10 @@ export function getAiUrlDisplay(ai: {
   ownDomain: string | null;
   subdomain: string | null;
 }) {
+  if (ai.subdomain === "default") {
+    return process.env.NEXT_PUBLIC_ROOT_DOMAIN;
+  }
+
   if (ai.ownDomain) {
     return ai.ownDomain;
   }
@@ -36,6 +40,10 @@ export function getAiUrlHref(ai: {
 }) {
   if (isDeployed()) {
     return `https://${getAiUrlDisplay(ai)}`;
+  }
+
+  if (ai.subdomain === "default") {
+    return "http://localhost:3000";
   }
 
   if (isSubdomainMode()) {

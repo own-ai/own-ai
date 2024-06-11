@@ -3,7 +3,10 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export function isDeployed() {
-  return process.env.NODE_ENV !== "development";
+  return (
+    process.env.NEXT_PUBLIC_ENABLE_LOCALHOST !== "1" &&
+    process.env.NEXT_PUBLIC_ENABLE_LOCALHOST !== "true"
+  );
 }
 
 export function isVercel() {

@@ -1,3 +1,5 @@
+import { embed } from "ai";
+
 import { embeddingsProvider } from "@/lib/embeddings-provider";
 import prisma from "@/lib/prisma";
 
@@ -5,12 +7,15 @@ const MAX_KNOWLEDGE_CONSIDERED = 8;
 const MAX_KNOWLEDGE_LENGTH = 40000; // ~10000 tokens
 
 export async function generateEmbedding(document: string): Promise<number[]> {
-  const input = document.slice(0, MAX_KNOWLEDGE_LENGTH).replace(/\n/g, " ");
-  const embeddingData = await embeddingsProvider.embeddings.create({
-    model: process.env.EMBEDDINGS_API_MODEL!,
-    input,
+  if (!process.env.EMBEDDINGS_API_MODEL) {
+    throw new Error("EMBEDDINGS_API_MODEL is not set.");
+  }
+
+  const value = document.slice(0, MAX_KNOWLEDGE_LENGTH).replace(/\n/g, " ");
+  const { embedding } = await embed({
+    model: embeddingsProvider.embedding(process.env.EMBEDDINGS_API_MODEL),
+    value,
   });
-  const [{ embedding }] = embeddingData.data;
   return embedding;
 }
 

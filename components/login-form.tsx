@@ -1,11 +1,12 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, Suspense, useState } from "react";
 import { toast } from "sonner";
 
 import LoadingDots from "@/components/icons/loading-dots";
+import { canUseCredentials } from "@/lib/actions/auth";
 
 export default function LoginForm({
   title,
@@ -15,14 +16,18 @@ export default function LoginForm({
   image?: ReactNode;
 }) {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [withCredentials, setWithCredentials] = useState(false);
 
   // Get error added by next-auth in URL.
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
 
+  const router = useRouter();
   const pathname = usePathname();
+  const callbackUrl = pathname.replace(/login$/, "");
 
   const submit = async () => {
     if (!email || loading) {
@@ -30,14 +35,35 @@ export default function LoginForm({
     }
 
     setLoading(true);
-    const response = await signIn("email", {
+    const useCredentials = await canUseCredentials(email);
+    setWithCredentials(useCredentials);
+
+    if (useCredentials && !password) {
+      setLoading(false);
+      return;
+    }
+
+    const response = await signIn(useCredentials ? "credentials" : "email", {
       email,
+      password,
       redirect: false,
-      callbackUrl: pathname.replace(/login$/, ""),
+      callbackUrl: useCredentials ? undefined : callbackUrl,
     });
     setLoading(false);
+
     if (!response?.ok) {
-      toast.error(`Error: ${response?.error}`);
+      let message = response?.error;
+      if (message === "CredentialsSignin") {
+        message = "The username or password is incorrect.";
+      }
+
+      toast.error(`Error: ${message}`);
+      return;
+    }
+
+    if (useCredentials) {
+      router.push(callbackUrl);
+      router.refresh();
     } else {
       setSubmitted(true);
     }
@@ -78,6 +104,22 @@ export default function LoginForm({
             required
             className="w-full rounded-md border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
           />
+          {withCredentials ? (
+            <input
+              name="password"
+              type="password"
+              placeholder="Your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  submit();
+                }
+              }}
+              required
+              className="my-2 w-full rounded-md border border-stone-200 bg-stone-50 px-4 py-2 text-sm text-stone-600 placeholder:text-stone-400 focus:border-black focus:outline-none focus:ring-black dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700 dark:focus:ring-white"
+            />
+          ) : null}
           <Suspense
             fallback={
               <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
