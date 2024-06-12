@@ -1,5 +1,17 @@
 {
-  "private": true,
+  "name": "ownai",
+  "version": "1.0.0",
+  "description": "ownAI, the platform for building and running AI assistants",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://ownai.com",
+  "author": "Jan Pawellek",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/own-ai/own-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/own-ai/own-ai/issues"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma db push && next build",
