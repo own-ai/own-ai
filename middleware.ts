@@ -26,12 +26,12 @@ export default async function middleware(req: NextRequest) {
 
   // special case for Vercel preview deployment URLs
   if (
-    hostname.includes("---") &&
-    hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
+    process.env.NEXT_PUBLIC_ROOT_DOMAIN &&
+    hostname.endsWith(
+      `.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX || "vercel.app"}`,
+    )
   ) {
-    hostname = `${hostname.split("---")[0]}.${
-      process.env.NEXT_PUBLIC_ROOT_DOMAIN
-    }`;
+    hostname = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
   }
 
   const searchParams = req.nextUrl.searchParams.toString();
