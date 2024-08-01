@@ -19,6 +19,8 @@ import { ratelimit } from "@/lib/ratelimit";
 import { Chat } from "@/lib/types";
 import { nanoid } from "@/lib/utils";
 
+const MAX_CONTEXT_LENGTH = 4000; // ~1000 tokens
+
 async function submitUserMessage(content: string) {
   "use server";
 
@@ -63,7 +65,10 @@ async function submitUserMessage(content: string) {
     .messages.filter((m: Message) => m.role === "user")
     .map((m: Message) => m.content)
     .join(" ");
-  const context = await getContext(ai.id, inputs);
+  const context = (await getContext(ai.id, inputs)).slice(
+    0,
+    MAX_CONTEXT_LENGTH,
+  );
 
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>;
   let textNode: undefined | React.ReactNode;
