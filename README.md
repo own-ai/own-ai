@@ -1,3 +1,14 @@
+## ⚠️ Deprecation Notice
+
+This repository has been **archived** and is no longer actively maintained.
+
+Please use the new app instead:  
+👉 [https://github.com/own-ai/app](https://github.com/own-ai/app)
+
+Thank you for your support!
+
+---
+
 # ownAI
 
 Welcome to ownAI, the platform for building and running AI assistants.
